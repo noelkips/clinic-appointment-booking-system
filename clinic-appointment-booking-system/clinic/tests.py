@@ -1,4 +1,4 @@
-﻿from datetime import timedelta, time
+from datetime import timedelta, time
 from unittest import skipUnless
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -127,6 +127,11 @@ class ClinicTests(TestCase):
     def test_overlap_schedule_rejected(self):
         row=DoctorAvailability(doctor=self.doctor,weekday=self.day.weekday(),start_time=time(10),end_time=time(13))
         with self.assertRaises(ValidationError): row.full_clean()
+    def test_missing_schedule_time_is_form_error(self):
+        self.client.force_login(self.admin)
+        r=self.client.post('/platform/schedules/',{'doctor':self.doctor.pk,'weekday':2,'end_time':'17:00'})
+        self.assertEqual(r.status_code,200)
+        self.assertIn('start_time',r.context['form'].errors)
     def test_reverse_period_rejected(self):
         row=DoctorAvailability(doctor=self.doctor,weekday=2,start_time=time(14),end_time=time(9))
         with self.assertRaises(ValidationError): row.full_clean()
@@ -167,3 +172,97 @@ class ClinicTests(TestCase):
         from django.test import Client
         c=Client(enforce_csrf_checks=True)
         self.assertEqual(c.post('/accounts/login/',{}).status_code,403)
+
+from unittest.mock import patch
+from django.test import override_settings, TransactionTestCase
+from django.core.management.base import CommandError
+from django.db.models import Count
+import os
+
+@override_settings(DEBUG=True, DEMO_SEED_ENABLED=True)
+class DemoSeedTests(TestCase):
+    def seed(self):
+        with patch.dict(os.environ, {'DEMO_PASSWORD':'test-demo-password-275'}):
+            call_command('seed_demo', no_reference=True, verbosity=0)
+    def test_seed_idempotence_authentication_and_counts(self):
+        from django.contrib.auth import authenticate
+        self.seed();self.seed()
+        self.assertEqual(User.objects.count(),27)
+        self.assertEqual(User.objects.filter(is_superuser=True).count(),2)
+        self.assertEqual(Doctor.objects.count(),5)
+        self.assertEqual(Patient.objects.count(),20)
+        self.assertEqual(DoctorAvailability.objects.count(),49)
+        self.assertEqual(Appointment.objects.count(),100)
+        for user in User.objects.all():
+            with self.subTest(user=user.username):
+                self.assertIsNotNone(authenticate(username=user.username,password='test-demo-password-275'))
+                self.client.force_login(user)
+                target='/platform/' if user.is_staff else ('/doctor-dashboard/' if hasattr(user,'doctor_profile') else '/dashboard/')
+                self.assertEqual(self.client.get(target).status_code,200)
+        duplicate=Appointment.objects.filter(status='confirmed').values('doctor','starts_at').annotate(n=Count('id')).filter(n__gt=1)
+        self.assertFalse(duplicate.exists())
+        duplicate=Appointment.objects.filter(status='confirmed').values('patient','starts_at').annotate(n=Count('id')).filter(n__gt=1)
+        self.assertFalse(duplicate.exists())
+        for period in DoctorAvailability.objects.all():period.full_clean()
+        for appointment in Appointment.objects.all():
+            from .services import schedule_matches
+            self.assertTrue(schedule_matches(appointment.doctor,appointment.starts_at))
+    def test_refuses_unmarked_user_without_changes(self):
+        u=User.objects.create_user('admin',password='real-account-password')
+        with self.assertRaises(CommandError):self.seed()
+        u.refresh_from_db();self.assertFalse(u.is_staff)
+        self.assertEqual(User.objects.count(),1)
+    @override_settings(DEBUG=False)
+    def test_refuses_production(self):
+        with self.assertRaises(CommandError):self.seed()
+        self.assertEqual(User.objects.count(),0)
+    @override_settings(DEMO_SEED_ENABLED=False)
+    def test_requires_explicit_opt_in(self):
+        with self.assertRaises(CommandError):self.seed()
+    def test_password_refresh_requires_deliberate_option(self):
+        self.seed()
+        with patch.dict(os.environ, {'DEMO_PASSWORD':'different-test-password'}):
+            with self.assertRaises(CommandError):call_command('seed_demo',no_reference=True,verbosity=0)
+            call_command('seed_demo',no_reference=True,reset_passwords=True,verbosity=0)
+        self.assertTrue(User.objects.get(username='patient1').check_password('different-test-password'))
+
+@skipUnless(connection.vendor=='postgresql', 'Requires a real PostgreSQL test database; SQLite cannot verify row locks.')
+class PostgreSQLConcurrencyTests(TransactionTestCase):
+    def test_concurrent_same_slot_has_one_winner(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Barrier
+        from django.db import connections
+        from .services import SlotConflict
+        doctor=Doctor.objects.create(user=User.objects.create_user('concurrency-doctor'),specialty='General')
+        day=timezone.localdate()+timedelta(days=7)
+        start=timezone.make_aware(timezone.datetime.combine(day,time(9)))
+        DoctorAvailability.objects.create(doctor=doctor,weekday=day.weekday(),start_time=time(9),end_time=time(12))
+        users=[]
+        for name in ['concurrent-a','concurrent-b']:
+            u=User.objects.create_user(name);Patient.objects.create(user=u);users.append(u.pk)
+        barrier=Barrier(2)
+        def attempt(pk):
+            try:
+                u=User.objects.get(pk=pk);d=Doctor.objects.get(pk=doctor.pk)
+                barrier.wait(timeout=10)
+                try:book_appointment(u,d,start);return 'booked'
+                except SlotConflict:return 'conflict'
+            finally:connections.close_all()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes=list(pool.map(attempt,users))
+        self.assertEqual(sorted(outcomes),['booked','conflict'])
+        self.assertEqual(Appointment.objects.count(),1)
+
+class ConstraintTests(TestCase):
+    setUpTestData = classmethod(ClinicTests.setUpTestData.__func__)
+    create = ClinicTests.create
+    def test_database_doctor_uniqueness(self):
+        from django.db import IntegrityError, transaction
+        self.create()
+        with self.assertRaises(IntegrityError),transaction.atomic():
+            Appointment.objects.create(doctor=self.doctor,patient=self.other,starts_at=self.start)
+    def test_api_requires_csrf_for_session_authentication(self):
+        from django.test import Client
+        c=Client(enforce_csrf_checks=True);c.force_login(self.patient_user)
+        self.assertEqual(c.post('/api/appointments',{'doctor':self.doctor.pk,'starts_at':self.start.isoformat()}).status_code,403)
+

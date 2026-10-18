@@ -1,0 +1,1 @@
+<div class="bar-chart" role="img" aria-label="{{ chart_label }}">{% for point in points %}<div class="bar-column"><span>{{ point.count }}</span><div class="bar-track"><div class="bar" style="height:{{ point.height }}%"></div></div><small>{{ point.label }}</small></div>{% endfor %}</div>

@@ -18,7 +18,7 @@ from .services import available_slots, book_appointment, change_appointment, rol
 
 
 def page(request, template, context=None):
-    return render(request, template, {'current_role': role(request.user), 'today': timezone.localdate(), **(context or {})})
+    return render(request, template, {'current_role': role(request.user), 'today': timezone.localdate(), 'now': timezone.now(), **(context or {})})
 
 
 def admin_required(view):
@@ -191,12 +191,21 @@ def platform(request):
         v['height'] = round(v['count']/maximum*100)
         v['cancelled_height'] = round(v['cancelled']/maximum*100)
     volumes = Doctor.objects.select_related('user').annotate(total=Count('appointments'), upcoming=Count('appointments', filter=Q(appointments__status='confirmed', appointments__starts_at__gt=now)))
+    def series(field, dates, upcoming=False):
+        source = qs.filter(status='confirmed', starts_at__gt=now) if upcoming else qs
+        values = [{'label': day.strftime('%a'), 'count': source.filter(**{field+'__date': day}).count()} for day in dates]
+        maximum = max([v['count'] for v in values]+[1])
+        for value in values:
+            value['height'] = round(value['count']/maximum*100)
+        return values
     return page(request, 'platform/overview.html', {
         'patients_count': Patient.objects.count(), 'doctors_count': Doctor.objects.count(), 'total_count': qs.count(),
         'upcoming_count': qs.filter(starts_at__gt=now, status='confirmed').count(), 'today_count': qs.filter(starts_at__date=timezone.localdate(), status='confirmed').count(),
         'cancelled_count': qs.filter(status='cancelled').count(), 'confirmed_count': qs.filter(status='confirmed').count(),
         'doctors_booked': Doctor.objects.filter(appointments__isnull=False).distinct().count(),
         'chart': chart, 'volumes': volumes, 'events': AppointmentEvent.objects.select_related('actor', 'appointment__doctor__user')[:6],
+        'booking_chart': series('created_at', days),
+        'upcoming_chart': series('starts_at', [timezone.localdate()+timedelta(days=i) for i in range(7)], True),
         'recent_patients': Patient.objects.select_related('user').order_by('-user__date_joined')[:4],
         'appointments': qs.select_related('doctor__user','patient__user').filter(starts_at__gt=now, status='confirmed')[:6],
     })

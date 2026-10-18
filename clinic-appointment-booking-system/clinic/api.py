@@ -13,6 +13,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment
         fields = ('id', 'patient', 'doctor', 'starts_at', 'reason', 'status', 'created_at')
         read_only_fields = ('patient', 'status', 'created_at')
+        validators = []  # The locked service returns conflicts consistently as HTTP 409.
 
 def mutation_error(exc):
     if isinstance(exc, PermissionDenied):

@@ -34,6 +34,8 @@ class DoctorAvailability(models.Model):
     def clean(self):
         if self.weekday is None or not 0 <= self.weekday <= 6:
             raise ValidationError('Choose a valid weekday.')
+        if self.start_time is None or self.end_time is None:
+            raise ValidationError('Provide both the start and end of the working period.')
         if self.slot_minutes != 30 or self.start_time >= self.end_time:
             raise ValidationError('Use 30-minute slots and a start before the end.')
         if self.doctor_id and DoctorAvailability.objects.filter(doctor_id=self.doctor_id, weekday=self.weekday, start_time__lt=self.end_time, end_time__gt=self.start_time).exclude(pk=self.pk).exists():
