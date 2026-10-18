@@ -1,27 +1,41 @@
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
+﻿from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.utils import timezone
-from .models import Appointment, Doctor, Patient
+from django.db import transaction
+from .models import Doctor, DoctorAvailability, Patient
+
+class SignInForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False)
 
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
     email = forms.EmailField()
-    class Meta: model = User; fields = ('username','first_name','last_name','email','password1','password2')
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+    @transaction.atomic
     def save(self, commit=True):
-        user = super().save(commit); user.email = self.cleaned_data['email']; user.save(); Patient.objects.get_or_create(user=user)
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            Patient.objects.create(user=user)
         return user
 
-class AppointmentForm(forms.ModelForm):
-    doctor = forms.ModelChoiceField(queryset=Doctor.objects.filter(is_available=True))
-    date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    time = forms.TimeField(widget=forms.TimeInput(attrs={'type':'time'}))
-    class Meta: model = Appointment; fields = ('doctor','date','time','reason')
-    def clean(self):
-        cleaned = super().clean()
-        if cleaned.get('date') and cleaned.get('time'):
-            starts = timezone.make_aware(timezone.datetime.combine(cleaned['date'], cleaned['time']))
-            if starts <= timezone.now() + timezone.timedelta(hours=1): raise forms.ValidationError('Choose a time at least one hour from now.')
-            cleaned['starts_at'] = starts
-        return cleaned
+class AppointmentForm(forms.Form):
+    doctor = forms.ModelChoiceField(queryset=Doctor.objects.filter(is_available=True, user__is_active=True))
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    starts_at = forms.DateTimeField(widget=forms.Select(), label='Available time')
+    reason = forms.CharField(max_length=200, required=False, widget=forms.Textarea(attrs={'rows': 2}))
+
+class DoctorForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = ('specialty', 'biography', 'is_available')
+
+class ScheduleForm(forms.ModelForm):
+    weekday = forms.TypedChoiceField(choices=enumerate(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']), coerce=int)
+    class Meta:
+        model = DoctorAvailability
+        fields = ('doctor', 'weekday', 'start_time', 'end_time')
+        widgets = {'start_time': forms.TimeInput(attrs={'type': 'time'}), 'end_time': forms.TimeInput(attrs={'type': 'time'})}

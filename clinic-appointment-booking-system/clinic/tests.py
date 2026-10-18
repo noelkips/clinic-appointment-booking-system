@@ -1,27 +1,169 @@
-from datetime import timedelta
+﻿from datetime import timedelta, time
+from unittest import skipUnless
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.management import call_command
+from django.db import connection
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
 from .models import Appointment, Doctor, DoctorAvailability, Patient
+from .services import available_slots, book_appointment, change_appointment
 
-class BookingTests(TestCase):
-    def setUp(self):
-        self.user=User.objects.create_user('patient', password='pass12345', first_name='Grace'); self.patient=Patient.objects.create(user=self.user)
-        self.doctor_user=User.objects.create_user('doctor', password='pass12345', first_name='Jane', last_name='Mwangi'); self.doctor=Doctor.objects.create(user=self.doctor_user, specialty='General practice')
-        self.client=APIClient(); self.client.force_authenticate(self.user)
+class ClinicTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.patient_user=User.objects.create_user('patient',password='test-password-274',first_name='Grace')
+        cls.patient=Patient.objects.create(user=cls.patient_user)
+        cls.other_user=User.objects.create_user('other',password='test-password-274')
+        cls.other=Patient.objects.create(user=cls.other_user)
+        cls.doctor_user=User.objects.create_user('doctor',password='test-password-274')
+        cls.doctor=Doctor.objects.create(user=cls.doctor_user,specialty='General medicine')
+        cls.admin=User.objects.create_superuser('admin','admin@example.test','test-password-274')
+        cls.day=timezone.localdate()+timedelta(days=7)
+        cls.start=timezone.make_aware(timezone.datetime.combine(cls.day,time(9)))
+        DoctorAvailability.objects.create(doctor=cls.doctor,weekday=cls.day.weekday(),start_time=time(9),end_time=time(12))
+        DoctorAvailability.objects.create(doctor=cls.doctor,weekday=cls.day.weekday(),start_time=time(14),end_time=time(17))
+    def api(self,user=None):
+        client=APIClient()
+        if user: client.force_authenticate(user)
+        return client
+    def create(self):
+        return book_appointment(self.patient_user,self.doctor,self.start,'PRIVATE APPOINTMENT')
+    def post(self,start=None,user=None):
+        return self.api(user or self.patient_user).post('/api/appointments',{'doctor':self.doctor.pk,'starts_at':(start or self.start).isoformat()},format='json')
+    def test_public_pages(self):
+        for url in ['/','/doctors/','/accounts/login/','/accounts/register/','/accounts/forgot-password/']:
+            with self.subTest(url=url): self.assertEqual(self.client.get(url).status_code,200)
+    def test_forgot_password_is_informational(self):
+        self.assertContains(self.client.get('/accounts/forgot-password/'),'Password recovery is coming soon')
+    def test_login_redirects_by_role(self):
+        for user,path in [(self.patient_user,'/dashboard/'),(self.doctor_user,'/doctor-dashboard/'),(self.admin,'/platform/')]:
+            with self.subTest(role=user.username):
+                self.client.logout()
+                self.assertRedirects(self.client.post('/accounts/login/',{'username':user.username,'password':'test-password-274'}),path,fetch_redirect_response=False)
+    def test_invalid_credentials(self):
+        self.assertContains(self.client.post('/accounts/login/',{'username':'patient','password':'wrong'}),'Please enter a correct')
+    def test_unsafe_next_rejected(self):
+        response=self.client.post('/accounts/login/?next=https://example.com',{'username':'patient','password':'test-password-274'})
+        self.assertEqual(response.url,'/dashboard/')
+    def test_forbidden_next_rejected(self):
+        response=self.client.post('/accounts/login/?next=/platform/',{'username':'patient','password':'test-password-274'})
+        self.assertEqual(response.url,'/dashboard/')
+    def test_registration_patient_only(self):
+        r=self.client.post('/accounts/register/',{'username':'new','first_name':'New','last_name':'Patient','email':'new@example.test','password1':'patient-test-489','password2':'patient-test-489','is_staff':'true'})
+        self.assertEqual(r.status_code,302)
+        u=User.objects.get(username='new')
+        self.assertFalse(u.is_staff)
+        self.assertTrue(hasattr(u,'patient_profile'))
+    def test_anonymous_protected(self):
+        self.assertEqual(self.client.get('/platform/').status_code,302)
+        self.assertEqual(self.api().get(f'/api/patients/{self.patient.pk}/appointments').status_code,403)
+    def test_platform_access(self):
+        routes=['/platform/','/platform/appointments/','/platform/doctors/','/platform/patients/','/platform/schedules/','/platform/activity/']
+        for user,expected in [(self.patient_user,403),(self.doctor_user,403),(self.admin,200)]:
+            self.client.force_login(user)
+            for url in routes:
+                with self.subTest(role=user.username,url=url): self.assertEqual(self.client.get(url).status_code,expected)
+    def test_patient_dashboard_isolation(self):
+        self.create();self.client.force_login(self.other_user)
+        self.assertNotContains(self.client.get('/dashboard/'),'PRIVATE APPOINTMENT')
+        self.assertEqual(self.client.get('/dashboard/').context['upcoming_count'],0)
+    def test_doctor_dashboard_isolation(self):
+        a=self.create()
+        other_doc=Doctor.objects.create(user=User.objects.create_user('otherdoc'),specialty='Other')
+        Appointment.objects.create(doctor=other_doc,patient=self.other,starts_at=self.start,reason='OTHER PRIVATE')
+        self.client.force_login(self.doctor_user)
+        r=self.client.get('/doctor-dashboard/')
+        self.assertEqual(r.context['upcoming_count'],1)
+        self.assertNotContains(r,'OTHER PRIVATE')
+    def test_doctor_cannot_read_patient_api(self):
+        self.create()
+        self.assertEqual(self.api(self.doctor_user).get(f'/api/patients/{self.patient.pk}/appointments').status_code,403)
+    def test_patient_cannot_read_other_patient_api(self):
+        self.assertEqual(self.api(self.other_user).get(f'/api/patients/{self.patient.pk}/appointments').status_code,403)
+    def test_owner_and_admin_can_read_patient_api(self):
+        self.create()
+        for user in [self.patient_user,self.admin]:
+            self.assertEqual(len(self.api(user).get(f'/api/patients/{self.patient.pk}/appointments').data),1)
     def test_booking_persists(self):
-        start=(timezone.now()+timedelta(days=2)).replace(second=0,microsecond=0).isoformat()
-        response=self.client.post('/api/appointments', {'doctor':self.doctor.pk,'starts_at':start,'reason':'Checkup'}, format='json')
-        self.assertEqual(response.status_code, 201); self.assertEqual(Appointment.objects.count(), 1)
+        self.assertEqual(self.post().status_code,201)
+        self.assertEqual(Appointment.objects.count(),1)
     def test_double_booking_rejected(self):
-        start=timezone.now()+timedelta(days=2)
-        Appointment.objects.create(patient=self.patient, doctor=self.doctor, starts_at=start)
-        response=self.client.post('/api/appointments', {'doctor':self.doctor.pk,'starts_at':start.isoformat()}, format='json')
-        self.assertEqual(response.status_code, 409)
+        self.create();self.assertEqual(self.post(user=self.other_user).status_code,409)
+    def test_patient_double_booking_rejected(self):
+        self.create()
+        doc=Doctor.objects.create(user=User.objects.create_user('second-doctor'),specialty='Test')
+        DoctorAvailability.objects.create(doctor=doc,weekday=self.day.weekday(),start_time=time(9),end_time=time(12))
+        r=self.api(self.patient_user).post('/api/appointments',{'doctor':doc.pk,'starts_at':self.start.isoformat()},format='json')
+        self.assertEqual(r.status_code,409)
+    def test_no_hours_rejected(self):
+        self.doctor.availability.all().delete();self.assertEqual(self.post().status_code,400)
+    def test_gap_rejected(self):
+        self.assertEqual(self.post(self.start+timedelta(hours=4)).status_code,400)
+    def test_off_grid_rejected(self):
+        self.assertEqual(self.post(self.start+timedelta(minutes=15)).status_code,400)
+    def test_partial_last_slot_rejected(self):
+        self.assertEqual(self.post(self.start+timedelta(hours=7,minutes=45)).status_code,400)
+    def test_past_rejected(self):
+        self.assertEqual(self.post(self.start-timedelta(days=14)).status_code,400)
+    def test_one_hour_rejected(self):
+        self.assertEqual(self.post(timezone.now()+timedelta(minutes=30)).status_code,400)
+    def test_unavailable_doctor_rejected(self):
+        self.doctor.is_available=False;self.doctor.save();self.assertEqual(self.post().status_code,400)
+    def test_invalid_doctor_and_timestamp(self):
+        for payload in [{'doctor':9999,'starts_at':self.start.isoformat()},{'doctor':self.doctor.pk,'starts_at':'bad'}]:
+            self.assertEqual(self.api(self.patient_user).post('/api/appointments',payload,format='json').status_code,400)
+    def test_split_availability(self):
+        slots=available_slots(self.doctor,self.day)
+        self.assertEqual(len(slots),12)
+        self.assertNotIn(self.start+timedelta(hours=4),slots)
     def test_availability_returns_slots(self):
-        future=timezone.localdate()+timedelta(days=7)
-        DoctorAvailability.objects.create(doctor=self.doctor, weekday=future.weekday(), start_time='09:00', end_time='10:00')
-        response=self.client.get(f'/api/doctors/{self.doctor.pk}/availability?date={future}')
-        self.assertEqual(response.status_code, 200); self.assertIn('slots', response.data)
+        r=self.api(self.patient_user).get(f'/api/doctors/{self.doctor.pk}/availability?date={self.day}')
+        self.assertEqual(len(r.data['slots']),12)
+    def test_bad_availability_date(self):
+        self.assertEqual(self.api(self.patient_user).get(f'/api/doctors/{self.doctor.pk}/availability?date=bad').status_code,400)
+    def test_overlap_schedule_rejected(self):
+        row=DoctorAvailability(doctor=self.doctor,weekday=self.day.weekday(),start_time=time(10),end_time=time(13))
+        with self.assertRaises(ValidationError): row.full_clean()
+    def test_reverse_period_rejected(self):
+        row=DoctorAvailability(doctor=self.doctor,weekday=2,start_time=time(14),end_time=time(9))
+        with self.assertRaises(ValidationError): row.full_clean()
+    def test_cancel_releases_slot(self):
+        a=self.create()
+        r=self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json')
+        self.assertEqual(r.status_code,200)
+        self.assertIn(self.start,available_slots(self.doctor,self.day))
+    def test_reschedule_aware_releases_old_slot(self):
+        a=self.create();new=self.start+timedelta(minutes=30)
+        r=self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/reschedule',{'starts_at':new.isoformat()},format='json')
+        self.assertEqual(r.status_code,200)
+        self.assertIn(self.start,available_slots(self.doctor,self.day))
+        self.assertNotIn(new,available_slots(self.doctor,self.day))
+    def test_reschedule_gap_rollback(self):
+        a=self.create()
+        r=self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/reschedule',{'starts_at':(self.start+timedelta(hours=4)).isoformat()},format='json')
+        self.assertEqual(r.status_code,400)
+        a.refresh_from_db();self.assertEqual(a.starts_at,self.start)
+    def test_other_patient_cannot_mutate(self):
+        a=self.create()
+        self.assertEqual(self.api(self.other_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json').status_code,404)
+    def test_doctor_cannot_mutate(self):
+        a=self.create()
+        self.assertEqual(self.api(self.doctor_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json').status_code,403)
+    def test_cancelled_cannot_reschedule(self):
+        a=self.create();change_appointment(self.patient_user,a.pk,'cancelled')
+        self.assertEqual(self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/reschedule',{'starts_at':self.start.isoformat()},format='json').status_code,400)
+    def test_root_api_alias(self):
+        self.assertEqual(self.api(self.patient_user).post('/appointments',{'doctor':self.doctor.pk,'starts_at':self.start.isoformat()},format='json').status_code,201)
+    def test_metrics_and_filtering(self):
+        self.create();self.client.force_login(self.admin)
+        response=self.client.get('/platform/')
+        self.assertEqual(response.context['total_count'],1)
+        self.assertEqual(response.context['patients_count'],2)
+        self.assertEqual(len(self.client.get('/platform/appointments/?status=cancelled').context['appointments']),0)
+    def test_csrf_required(self):
+        from django.test import Client
+        c=Client(enforce_csrf_checks=True)
+        self.assertEqual(c.post('/accounts/login/',{}).status_code,403)

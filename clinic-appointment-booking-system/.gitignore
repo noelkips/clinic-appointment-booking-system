@@ -14,3 +14,15 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+staticfiles/
+.local/
+.write-check
+docs/LOCAL_TEST_ACCOUNTS.md
