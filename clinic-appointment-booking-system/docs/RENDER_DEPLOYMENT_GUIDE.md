@@ -64,7 +64,7 @@ Render root-directory filtering means a change only to root `.github` files may 
 
 | Name | Production value |
 |---|---|
-| `DJANGO_SECRET_KEY` | Blueprint-generated private value, not the local secret |
+| `DJANGO_SECRET_KEY` | Persistent, privately generated `secrets.token_urlsafe(64)` value supplied in Dashboard (`sync: false`), not the local key |
 | `DATABASE_URL` | `fromDatabase` internal connection; never print it |
 | `DJANGO_DEBUG` | `False` |
 | `DJANGO_TRUST_PROXY` | `True` only behind Render's trusted HTTPS proxy |
@@ -79,6 +79,24 @@ Render root-directory filtering means a change only to root `.github` files may 
 Debug-off settings use secure session/CSRF cookies, HTTPS redirect, one-hour HSTS and console logging. HSTS is deliberately host-only with no preload commitment; Django advisory checks W005/W021 are silenced with source comments. Do not enable preload or includeSubDomains before confirming all relevant domains use HTTPS.
 
 `DJANGO_TRUST_PROXY` tells Django to trust `X-Forwarded-Proto`. Verify Render strips/replaces client forwarding headers and that HTTPS requests are recognized as secure; never enable this on an untrusted direct server. Forwarded HTTPS tests exercise redirect-loop prevention locally, not Render's actual network boundary. Console logs use Django's request exception handling; do not log request bodies, environment values or credential URLs. This is not a comprehensive privacy/log-retention audit.
+
+### Secret-key deployment failure and recovery
+
+Render documents `generateValue: true` as a base64-encoded 256-bit random value (44 characters). Django's W009 length heuristic requires at least 50 characters, at least five distinct characters and no `django-insecure-` prefix. A Render-format random value reproduces W009 locally; it is not evidence that Render's randomness is weak. CI used a separate longer test-only key, so passing CI did not test the Render-generated value.
+
+The reported Render W009 proves the effective setting failed Django's criteria, but the deployed value/metadata has not been inspected. A Dashboard override could produce the same warning. Settings load `.env` with `override=False`, so an existing Render environment value wins. No test settings are selected by the build script, no other key override was found, and `os.getenv` and `os.environ.get` are equivalent; duplicate assignments do not fix the problem.
+
+The Blueprint now uses `sync: false` to request a persistent operator-supplied secret for new services. **Changing YAML alone does not replace the existing service's value.** For `savannah-clinic`, open Environment in Render Dashboard and replace `DJANGO_SECRET_KEY` with one privately generated strong value. Generate it once on a trusted Windows terminal and copy directly to the clipboard without displaying it:
+
+```powershell
+python -c "import secrets; print(secrets.token_urlsafe(64), end='')" | Set-Clipboard
+```
+
+Store it securely, paste it into the service's private environment field, then clear the clipboard with `Set-Clipboard -Value ''`. Do not paste it into chat, Git, CI variables, a build command or logs. Use Save only if offered; changing environment settings or choosing Save/Rebuild/Deploy can initiate a deployment, so do that only when authorized. Keep the value stable across builds and instances. Do not use the public CI key. Replacing an existing signing key invalidates existing signed sessions/tokens unless a separately planned fallback rotation is used; no fallback is added here.
+
+After the fix is published through `development` ? PR ? `main`, confirm Render's service Environment contains the private value, the build uses `config.settings` (no unexpected `DJANGO_SETTINGS_MODULE=config.test_settings` override), and production check passes before collectstatic/migrations. If it still reports W009, verify the value's length/criteria privately; never print the value. Blueprint `sync: false` does not silently regenerate or update existing values on every sync. Build script retains `check --deploy --fail-level WARNING` unchanged.
+
+Local recovery verification: **69 PostgreSQL tests passed in 7.219s**, including nine production-configuration/health/proxy tests, core booking, direct constraints, both concurrency scenarios and date boundaries. Production checks with a temporary strong in-memory key passed with only the existing two intentional HSTS advisories silenced; fresh static collection, WSGI/login, missing-migration and applied-migration checks passed. Compared clinic/auth rows were unchanged. The populated database was not migrated or reset. No secret was printed or persisted by validation. No live Render environment inspection/deployment was performed.
 
 ## 7. Database migration procedure
 

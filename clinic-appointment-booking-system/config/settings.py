@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.env', override=False)
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 if not SECRET_KEY:

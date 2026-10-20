@@ -1,7 +1,38 @@
 from unittest.mock import patch
+import base64
+import os
+import runpy
+import secrets
+from pathlib import Path
 
+from django.core.checks.security.base import check_secret_key
+from django.core.exceptions import ImproperlyConfigured
 from django.db import OperationalError
 from django.test import SimpleTestCase, TestCase, override_settings
+
+
+class SecretConfigurationTests(SimpleTestCase):
+    def test_render_generated_value_triggers_django_length_warning(self):
+        key = base64.b64encode(secrets.token_bytes(32)).decode('ascii')
+        self.assertEqual(len(key), 44)
+        with override_settings(SECRET_KEY=key):
+            self.assertEqual([warning.id for warning in check_secret_key(None)], ['security.W009'])
+
+    def test_long_random_secret_passes(self):
+        with override_settings(SECRET_KEY=secrets.token_urlsafe(64)):
+            self.assertEqual(check_secret_key(None), [])
+
+    def test_environment_secret_takes_precedence_over_dotenv(self):
+        key = secrets.token_urlsafe(64)
+        with patch.dict(os.environ, {'DJANGO_SECRET_KEY': key, 'DJANGO_DEBUG': 'True'}):
+            # Use the actual loader and local file, with explicit non-override semantics.
+            namespace = runpy.run_path(str(Path(__file__).with_name('settings.py')))
+            self.assertTrue(namespace['SECRET_KEY'] == key)
+
+    def test_missing_secret_has_no_development_fallback(self):
+        with patch.dict(os.environ, {'DJANGO_SECRET_KEY': ''}), patch('dotenv.load_dotenv'):
+            with self.assertRaisesMessage(ImproperlyConfigured, 'Set DJANGO_SECRET_KEY.'):
+                runpy.run_path(str(Path(__file__).with_name('settings.py')))
 
 
 class HealthTests(TestCase):
