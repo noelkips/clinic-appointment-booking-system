@@ -24,7 +24,7 @@ services:
       - key: DJANGO_TRUST_PROXY
         value: 'True'
       - key: DJANGO_ALLOWED_HOSTS
-        value: localhost,127.0.0.1
+        value: localhost,127.0.0.1,.onrender.com
       - key: DEMO_SEED_ENABLED
         value: 'False'
       - key: DJANGO_ALLOW_SQLITE
