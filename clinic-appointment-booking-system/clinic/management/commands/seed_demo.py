@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 from clinic.models import Appointment, AppointmentEvent, Doctor, DoctorAvailability, Patient
-from clinic.services import validate_slot
+from clinic.demo import require_local_demo, rotate_passwords, write_reference, validate_demo_slot
 
 DOCTORS = [
     ('Amara','Njoroge','General Medicine','A thoughtful approach to everyday health, preventive care, and helping you plan your next steps.'),
@@ -25,14 +25,21 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--reset-passwords', action='store_true', help='Deliberately reset only marked demo account passwords.')
         parser.add_argument('--no-reference', action='store_true', help='Do not write a local credential reference (useful for tests).')
+        parser.add_argument('--passwords-only', action='store_true', help='With --reset-passwords, rotate the 27 existing marked accounts without modifying demo data.')
 
     def handle(self, *args, **options):
-        host = settings.DATABASES['default'].get('HOST', '')
-        if not settings.DEBUG or not settings.DEMO_SEED_ENABLED or host not in ('', 'localhost', '127.0.0.1', '::1'):
-            raise CommandError('Demo seeding requires DEBUG, DEMO_SEED_ENABLED and a loopback/local database. Production execution is disabled.')
+        require_local_demo()
+        if options['passwords_only'] and not options['reset_passwords']:
+            raise CommandError('--passwords-only requires an explicit --reset-passwords.')
         password = os.environ.get('DEMO_PASSWORD') or getpass.getpass('Local demo password: ')
         if len(password) < 8:
             raise CommandError('Use at least eight characters.')
+        if options['passwords_only']:
+            users = rotate_passwords(password, os.environ.get('DEMO_PREVIOUS_PASSWORD'))
+            if not options['no_reference']:
+                write_reference(users, password)
+            self.stdout.write(self.style.SUCCESS('Rotated and authenticated exactly 27 designated demo accounts. Profiles and booking data were not modified.'))
+            return
         rows=[]
         with transaction.atomic():
             group,_=Group.objects.get_or_create(name='__savannah_local_demo__')
@@ -68,7 +75,8 @@ class Command(BaseCommand):
                 user=account('patient'+str(index),first,last)
                 patient,_=Patient.objects.get_or_create(user=user)
                 patients.append(patient)
-            today=timezone.localdate()
+            seed_now=timezone.now()
+            today=timezone.localdate(seed_now)
             for index in range(100):
                 doctor=doctors[index%5]
                 patient=patients[index%20]
@@ -77,9 +85,13 @@ class Command(BaseCommand):
                     continue
                 day=today+timedelta(days=index//5-8)
                 start=timezone.make_aware(datetime.combine(day,time(9+(index%3),30 if index%2 else 0)))
-                historical=start<timezone.now()
-                validate_slot(doctor,start,patient.pk,historical=historical)
-                obj=Appointment.objects.create(patient=patient,doctor=doctor,starts_at=start,reason=reason,status='cancelled' if index%7==0 else 'confirmed')
+                # Keep history explicit; put all remaining visits for today on tomorrow.
+                # This avoids notice-boundary races while a fresh seed is running.
+                if day == today and start >= seed_now:
+                    day += timedelta(days=1)
+                    start = timezone.make_aware(datetime.combine(day, start.timetz().replace(tzinfo=None)))
+                validate_demo_slot(doctor, start, patient.pk)
+                obj=Appointment.objects.create(patient=patient,doctor=doctor,starts_at=start,reason=reason,status='cancelled' if index%7==0 else 'confirmed', cancellation_reason='Fictional demo cancellation' if index%7==0 else '')
                 booked_at=start-timedelta(days=2+index%6)
                 if booked_at>timezone.now():
                     booked_at=timezone.now()-timedelta(hours=1+index%48)

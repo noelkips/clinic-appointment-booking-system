@@ -1,8 +1,17 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 from .models import Appointment, AppointmentEvent, Doctor, Patient
+
+
+def validate_cancellation_reason(value):
+    if not isinstance(value, str) or not value.strip():
+        raise ValidationError({'reason': 'A nonblank cancellation reason is required.'})
+    value = value.strip()
+    if len(value) > 500:
+        raise ValidationError({'reason': 'Use at most 500 characters.'})
+    return value
 
 
 class SlotConflict(ValidationError):
@@ -52,21 +61,35 @@ def validate_slot(doctor, starts, patient_id=None, exclude=None, historical=Fals
         raise ValidationError('Appointments require more than one hour of advance notice.')
     if not schedule_matches(doctor, starts):
         raise ValidationError('Choose a complete 30-minute slot within working hours.')
-    existing = Appointment.objects.filter(status='confirmed', starts_at=starts).exclude(pk=exclude)
+    existing = Appointment.objects.filter(
+        status='confirmed', starts_at__gt=starts-timedelta(minutes=30),
+        starts_at__lt=starts+timedelta(minutes=30),
+    ).exclude(pk=exclude)
     if existing.filter(doctor=doctor).exists() or (patient_id and existing.filter(patient_id=patient_id).exists()):
         raise SlotConflict('This doctor or patient already has an appointment at that time.')
 
 
 def available_slots(doctor, day):
+    # A slot on the final representable day cannot safely use next-day bounds.
+    if day == date.max:
+        return []
     if not doctor.is_available or not doctor.user.is_active:
         return []
-    booked = set(doctor.appointments.filter(status='confirmed', starts_at__date=day).values_list('starts_at', flat=True))
+    day_start = timezone.make_aware(datetime.combine(day, datetime.min.time()))
+    booked = list(doctor.appointments.filter(
+        status='confirmed', starts_at__gt=day_start-timedelta(minutes=30),
+        starts_at__lt=day_start+timedelta(days=1),
+    ).values_list('starts_at', flat=True))
+    cutoff = timezone.now() + timedelta(hours=1)
     slots = []
     for period in doctor.availability.filter(weekday=day.weekday()):
         cursor = timezone.make_aware(datetime.combine(day, period.start_time))
         end = timezone.make_aware(datetime.combine(day, period.end_time))
         while cursor + timedelta(minutes=30) <= end:
-            if cursor > timezone.now() + timedelta(hours=1) and cursor not in booked:
+            if cursor > cutoff and not any(
+                start < cursor+timedelta(minutes=30) and start+timedelta(minutes=30) > cursor
+                for start in booked
+            ):
                 slots.append(cursor)
             cursor += timedelta(minutes=30)
     return sorted(set(slots))
@@ -88,7 +111,7 @@ def book_appointment(user, doctor, starts, reason=''):
 
 
 @transaction.atomic
-def change_appointment(user, pk, action, starts=None):
+def change_appointment(user, pk, action, starts=None, cancellation_reason=None):
     original = visible_appointments(user).get(pk=pk)
     if role(user) == 'doctor':
         raise PermissionDenied('Only the patient or an administrator can change this booking.')
@@ -98,12 +121,13 @@ def change_appointment(user, pk, action, starts=None):
     if obj.status != 'confirmed' or obj.starts_at <= timezone.now():
         raise ValidationError('Only upcoming confirmed appointments can be changed.')
     if action == 'cancelled':
+        obj.cancellation_reason = validate_cancellation_reason(cancellation_reason)
         obj.status = 'cancelled'
     elif action == 'rescheduled':
         validate_slot(obj.doctor, starts, obj.patient_id, obj.pk)
         obj.starts_at = starts
     else:
         raise ValidationError('Unknown appointment action.')
-    obj.save(update_fields=['status', 'starts_at'])
+    obj.save(update_fields=['status', 'starts_at', 'cancellation_reason'])
     AppointmentEvent.objects.create(appointment=obj, actor=user, action=action)
     return obj

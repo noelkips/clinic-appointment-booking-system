@@ -1,163 +1,153 @@
-# Savannah Informatics Clinic Booking System
+# Savannah Informatics Clinic Appointment Booking System
 
-Django + Django REST Framework clinic scheduling, rendered with Django Templates, compiled Tailwind CSS, custom component CSS, and vanilla JavaScript. There are no React, Next.js, NPM, PNPM, or Yarn build dependencies.
+## 1. Project Overview
 
-## Verified local status — October 18, 2026
+A Django/DRF appointment system for a small clinic with five demonstration doctors, weekly working hours and 30-minute slots. Patients view availability, book, cancel with a reason and reschedule. Public doctor pages and responsive patient, doctor and administrator dashboards support the assessment APIs.
 
-- Windows 11 Pro; Python 3.13.12; Django 5.2.18.
-- Public landing page, doctor directory, centered authentication, and separate administrator, doctor, and patient workspaces are implemented.
-- Local URL: http://127.0.0.1:8000/.
-- PostgreSQL is the default/approved backend. It is **not installed or verified on this machine**. The current ignored `.env` explicitly enables SQLite for local demonstration. SQLite results do not verify PostgreSQL concurrency.
-- 27 marked demo accounts, 100 seeded appointments, and 49 working periods were created. An additional non-demo patient account was preserved. Browser workflow checks created two additional cancelled appointments.
-- 48 automated tests: 47 passed, one PostgreSQL concurrency test skipped. Real Chrome verification covered 120 page/viewport combinations and the patient booking/reschedule/cancel workflow.
-- Render deployment and GitHub Actions are pending and unverified. This downloaded copy has no `.git` metadata; Git is not available on PATH.
+Stack: Python 3.13, Django 5.2, Django REST Framework, PostgreSQL, Django Templates, Tailwind standalone CLI and vanilla JavaScript. No Node build is required.
 
-## Windows setup
+Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noelkips/clinic-appointment-booking-system), confirmed as Git origin; reviewer access/current remote contents remain unverified. **Live URL: pending.** CI and Render configuration are prepared locally; no push, cloud deployment or successful hosted run is claimed.
 
-Run commands in the directory containing this README and `manage.py` (the inner `clinic-appointment-booking-system` directory).
+## 2. System Design and Technical Decisions
+
+A Django monolith shares authentication, ORM and booking services between HTML forms and REST views. It keeps operations simple for five doctors while supporting growth through indexing, aggregation and pagination before distributed infrastructure.
+
+PostgreSQL provides transactions, row locks and GiST exclusion constraints. Services lock Doctor then Patient, validate, save and record an event atomically; appointment changes also lock the appointment. Conditional unique constraints and half-open 30-minute interval exclusions prevent doctor and patient overlap, including direct SQL writes. Adjacent visits are allowed. Database guards do not enforce every business rule for direct maintenance edits.
+
+Slots are derived from weekly periods rather than pre-generated rows. This supports breaks without extra slot storage; leave, holidays, overnight shifts and variable durations need future policy. Dashboards currently use repeated counts and unpaginated lists. Event history does not retain old/new timestamps. These are scalability/history trade-offs, not missing mandatory endpoints.
+
+This describes the implemented design retrospectively. **TODO (developer): provide original design-before-code evidence if available.** No personal decision history is inferred.
+
+## 3. Data Models and Architecture
+
+| Model | Main fields / relationships |
+|---|---|
+| Doctor | One-to-one User, specialty, biography, is_available |
+| Patient | One-to-one User, phone |
+| DoctorAvailability | Doctor FK, weekday, start_time, end_time, slot_minutes=30 |
+| Appointment | Protected Doctor/Patient FKs, starts_at, reason, cancellation_reason, confirmed/cancelled status, created_at |
+| AppointmentEvent | Appointment FK, nullable User actor, booked/rescheduled/cancelled action, occurred_at |
+
+```mermaid
+flowchart LR
+    Browser[Templates and vanilla JavaScript] --> Views[Django views and forms]
+    Client[Session API client] --> API[DRF views and serializer]
+    Views --> Services[Shared booking and authorization services]
+    API --> Services
+    Services --> DB[(PostgreSQL: locks and constraints)]
+```
+
+Django User `is_staff` means application administrator; otherwise Doctor/Patient profiles determine role. Patients access their own records, doctors assigned visits and personal schedules, staff clinic management. Registration creates patients only. Login redirects to `/dashboard/`, `/doctor-dashboard/` or `/platform/`. Session-authenticated mutations and POST logout require CSRF. The maintenance UI is `/django-admin/`, with separate Django model permissions. Password recovery is informational, not an email reset feature.
+
+## 4. REST API and Booking Rules
+
+All APIs require a login session; retain cookies and supply CSRF for unsafe requests. No bearer-token endpoint exists. Paths have **no trailing slash**; equivalent root aliases without `/api` exist.
+
+| Method / route | Input | Success / common errors |
+|---|---|---|
+| POST `/api/appointments` | doctor PK, starts_at; optional reason (200 characters) | Patient only; 201 appointment; 400 validation; 409 conflict |
+| GET `/api/doctors/{id}/availability?date=YYYY-MM-DD` | Doctor PK/date | 200 date + ISO slots; 400 invalid date; 404 doctor |
+| PATCH `/api/appointments/{id}/cancel` | reason, trimmed nonblank string ≤500 | Owner/staff; 200 cancelled representation; 400 repeat/invalid reason |
+| PATCH `/api/appointments/{id}/reschedule` | starts_at, same doctor | Owner/staff; 200 updated representation; 400 invalid/cancelled; 409 conflict |
+| GET `/api/patients/{id}/appointments` | Patient profile PK | Owner/staff; 200 future confirmed visits sorted by date then ID |
+
+Anonymous/forbidden/CSRF requests return 403; inaccessible appointment objects return 404. Illustrative booking body: `{"doctor":1,"starts_at":"2026-11-02T09:00:00+03:00","reason":"Consultation"}`. Obtain a genuinely free future timestamp from availability; examples are not reservations. See [complete API requests, responses and errors](docs/API_REFERENCE.md).
+
+Appointments must fit a complete 30-minute period and align to its grid; doctors must be active/available. Past starts and starts **at or before one hour from now** are rejected. This strict equality policy resolves the bonus requirement conservatively. Times are aware; schedules/displays use Africa/Nairobi. Explicit ISO offsets are recommended.
+
+Cancelled records occupy no slot. Cancellation retains the original consultation reason separately. Only future confirmed visits can change. Rescheduling validates like a fresh booking, releases the old interval on success and leaves it intact on failure. Availability reflects doctor freedom; patient overlaps across doctors are checked on submission. Five doctors is data, not a model limit.
+
+## 5. Local Setup
+
+The Git root contains the inner application folder. Run these **fresh-environment** steps from a new checkout; preserve an existing `.env` and populated database:
 
 ```powershell
-python -m venv .venv
+git clone https://github.com/noelkips/clinic-appointment-booking-system.git
+Set-Location clinic-appointment-booking-system\clinic-appointment-booking-system
+py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Put the generated key into `.env`; never commit it. Activation is optional: use `.\.venv\Scripts\python.exe` directly if PowerShell activation is restricted. On this machine Python is installed at `%LOCALAPPDATA%\Programs\Python\Python313\python.exe`.
-
-The application loads `.env` through `python-dotenv` without overriding process environment variables. Required settings:
-
-| Variable | Purpose |
-|---|---|
-| `DJANGO_SECRET_KEY` | Random secret; startup fails if absent |
-| `DJANGO_DEBUG` | `True` locally; defaults to `False` |
-| `DJANGO_ALLOWED_HOSTS` | Local example: `localhost,127.0.0.1` |
-| `DATABASE_URL` | PostgreSQL connection URL |
-| `DEMO_SEED_ENABLED` | Explicit local-only seed permission; defaults to `False` |
-| `DJANGO_ALLOW_SQLITE` | Diagnostic opt-in only; defaults to disabled |
-
-Production uses `DJANGO_DEBUG=False`, secure cookies and manifest static storage. Do not deploy `.env`, demonstration data, credential references, or `config.test_settings`.
-
-## PostgreSQL on Windows 11
-
-1. Download a supported stable Windows x64 server installer from [PostgreSQL's official Windows download page](https://www.postgresql.org/download/windows/). That page links the EDB installer.
-2. Install PostgreSQL Server and command-line tools, choose port `5432`, and set a private `postgres` administrator password. Retain the Windows service installation.
-3. Open SQL Shell (psql), connect to localhost as `postgres`, and run:
-
-```sql
-CREATE ROLE clinic_local LOGIN CREATEDB;
-\password clinic_local
-CREATE DATABASE clinic_local OWNER clinic_local;
-```
-
-`CREATEDB` is for Django's local test database. Use a separate, least-privilege account for production. Choose a local password at the hidden prompt.
-
-4. Set these values in the ignored `.env` (URL-encode special characters in the database password):
-
-```dotenv
-DATABASE_URL=postgresql://clinic_local:YOUR_LOCAL_PASSWORD@127.0.0.1:5432/clinic_local
-DJANGO_DEBUG=True
-DJANGO_ALLOW_SQLITE=False
-```
-
-5. Verify the local Windows PostgreSQL service and connect:
+Create a local PostgreSQL role/database, enable `btree_gist`, then privately configure `DJANGO_SECRET_KEY`, `DATABASE_URL`, `DJANGO_DEBUG=True` and local `DJANGO_ALLOWED_HOSTS`. Percent-encode reserved password characters in connection URLs. Supported proxy/origin controls are in `.env.example`; leave proxy trust off locally. Never commit secrets.
 
 ```powershell
-Get-Service *postgres*
-# Adapt version/path if PostgreSQL was installed elsewhere.
-& 'C:\Program Files\PostgreSQL\17\bin\psql.exe' -h 127.0.0.1 -U clinic_local -d clinic_local -c 'SELECT version();'
 python manage.py check
-python manage.py makemigrations --check --dry-run
-python manage.py migrate --plan
 python manage.py migrate
-python manage.py test --settings=config.test_settings
-```
-
-The concurrency test executes only against PostgreSQL. Never point local commands at Render. Switching databases does not transfer existing SQLite records; rerun local seeding on the new database. Keep the existing SQLite file intact.
-
-### Explicit SQLite diagnostic mode
-
-If PostgreSQL and Docker are unavailable, `.env` may deliberately contain `DATABASE_URL=sqlite:///db.sqlite3`, `DJANGO_DEBUG=True`, and `DJANGO_ALLOW_SQLITE=True`. This is the current local demonstration configuration, not the approved final database configuration. SQLite is rejected without the explicit development opt-in.
-
-## Migrations, demo data and startup
-
-```powershell
-python manage.py migrate --plan
-python manage.py migrate
-# Set DEMO_SEED_ENABLED=True in local .env before seeding.
-python manage.py seed_demo
-# Enter the supplied local demo password at the hidden prompt.
+python manage.py createsuperuser
 python manage.py runserver 127.0.0.1:8000
 ```
 
-The seed command verifies 2 administrators (`admin`, `admin2`), 5 doctors (`doctor1`–`doctor5`), and 20 patients (`patient1`–`patient20`). It creates a Git-ignored `docs/LOCAL_TEST_ACCOUNTS.md` containing the actual credentials. The shared password is intentionally absent from tracked source and documentation.
+Open `http://127.0.0.1:8000/`. Fresh data needs Doctor/DoctorAvailability records. Existing demonstration data needs no reseeding. Inspect `python manage.py seed_demo --help` for development-only safeguards; private accounts remain in ignored `docs/LOCAL_TEST_ACCOUNTS.md`. Never seed production.
 
-Seeding is restricted to debug mode, explicit enablement, and a loopback/local database. Users must carry the demo ownership marker; a colliding real username aborts the transaction. Repeated seeding does not duplicate records. `python manage.py seed_demo --reset-passwords` deliberately refreshes only marked demo passwords. Use the original password on ordinary reruns. Seeded historical appointments remain historical; on subsequent days reruns preserve existing dates and changes rather than rewrite appointment history.
-
-## Routes
-
-| Route | Access / behavior |
-|---|---|
-| `/` | Public landing page |
-| `/doctors/` | Public searchable doctor directory |
-| `/doctors/<id>/` | Profile, split schedules, and available slots |
-| `/accounts/login/` | Shared role-aware login |
-| `/accounts/register/` | Patient-only registration |
-| `/accounts/forgot-password/` | Coming Soon information; no reset email |
-| `/dashboard/` | Patient workspace |
-| `/doctor-dashboard/` | Doctor workspace |
-| `/dashboard/redirect/` | Redirects to the user's role workspace |
-| `/appointments/` | Role-scoped appointment records |
-| `/appointments/book/` | Patient booking form |
-| `/appointments/<id>/` | Authorized detail, cancellation and rescheduling |
-| `/platform/` | Administrator metrics and analytics |
-| `/platform/appointments/` | Search and doctor/patient/date/status filters |
-| `/platform/doctors/` | Doctor directory and profile management |
-| `/platform/patients/` | Restricted patient directory and history |
-| `/platform/schedules/` | Schedule listing and non-overlapping period creation |
-| `/platform/activity/` | Recorded appointment events and registrations |
-| `/account/` | Authenticated account summary |
-| `/django-admin/` | Optional Django maintenance interface |
-
-Django Admin moved from `/admin/`; primary administration is `/platform/`. Doctors and patients receive HTTP 403 on administrator routes. Unauthorized appointment objects return 404.
-
-## API and booking rules
-
-Session authentication and CSRF protection apply. Both the existing `/api/` URLs and assessment root aliases are supported:
-
-- `POST /appointments` (also `/api/appointments`)
-- `GET /doctors/<id>/availability?date=YYYY-MM-DD` (also `/api/doctors/...`)
-- `PATCH /appointments/<id>/cancel` (also `/api/appointments/...`)
-- `PATCH /appointments/<id>/reschedule` (also `/api/appointments/...`)
-- `GET /api/patients/<id>/appointments` (patient owner or administrator only)
-
-Booking and rescheduling require an active, available doctor, a complete 30-minute slot within a working period, more than one hour of advance notice, and no doctor/patient conflict. Split-period gaps are excluded. Mutations use atomic transactions; parent-row locks serialize PostgreSQL booking writes, and conditional unique constraints provide a final SQL safeguard. Invalid input returns 400, unauthorized access 403/404, conflicts 409. Only patients and administrators can mutate upcoming confirmed appointments. Cancellation releases the slot. Past appointments cannot be modified through the application.
-
-## Styling without Node
-
-The official standalone Tailwind CLI **v4.1.18** was used successfully:
+Compiled CSS is included. If rebuilding with the separately obtained standalone Tailwind v4.1.18 binary:
 
 ```powershell
-.\.local\tailwindcss.exe -i ./static/src/input.css -o ./static/css/tailwind.css --minify
-python manage.py collectstatic --noinput
+.\.local\tailwindcss.exe -i static/src/input.css -o static/css/tailwind.css --minify
+python manage.py collectstatic --noinput --ignore=src
 ```
 
-Obtain that platform binary from the [official Tailwind standalone releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.1.18). The binary is local-only and ignored. Included `static/css/tailwind.css` is compiled output; `static/css/app.css` remains the custom component design layer. The interface has not been converted entirely to Tailwind utilities. No NPM build step is needed.
+[Detailed Windows/PostgreSQL setup, environment, backup/restore and demo guide](docs/LOCAL_DEVELOPMENT_GUIDE.md).
 
-Hero art, profile monograms, icons and branding are local CSS/SVG, with no external image or font dependency. Authentication uses an animated gradient rather than a photographic carousel; it respects reduced motion and pauses when hidden.
+## 6. Testing
 
-## Verification
+Use local PostgreSQL test credentials with CREATEDB and extension permissions; Django uses the separate `test_clinic_local` database. Never configure tests against production. Test settings use fast test-only hashing.
 
 ```powershell
-python -m pip check
 python manage.py check
 python manage.py makemigrations --check --dry-run
-python manage.py test --settings=config.test_settings --verbosity 1
+python -m pip check
+python manage.py test --settings=config.test_settings --keepdb --noinput --verbosity 2
+# Focused production infrastructure regressions:
+python manage.py test config.test_production --settings=config.test_settings --keepdb --noinput
 ```
 
-`config.test_settings` uses fast test-only password hashing and plain static storage for isolated test databases. Application accounts use Django's normal password hashing. The full ordinary `manage.py test` command was also executed; it is slower because demo-account authentication uses the normal hasher.
+**Current local result: 88 tests passed in 31.546s on PostgreSQL, no skips**, including both concurrent booking scenarios and five new health/proxy checks. Production checks/static/WSGI smoke checks also passed after excluding Tailwind source from collection. See [deployment validation and limits](docs/RENDER_DEPLOYMENT_GUIDE.md#local-validation).
 
-Local Chrome evidence and the executable verification harness are in ignored `.local/browser/` and `.local/browser_verify.py`. Chrome checked 320, 375, 390, 768, 1024 and 1440px. The browser workflow creates a local cancelled verification appointment; it is separate from the 100 seeded appointments.
+Historical recorded results: developer-confirmed 80/80 PostgreSQL milestone; 60 targeted PostgreSQL tests; 57 reversible database checks; 63 Chrome viewport checks and seven interaction checks. These are distinct earlier results, not freshly rerun browser tests. Full current PostgreSQL browser booking/cancellation/rescheduling submissions remain manually unverified. See [functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md).
 
-See `docs/IMPLEMENTATION_REPORT.md` for detailed evidence and the compliance matrix. PostgreSQL, deployed CI/CD, pagination at scale, full Tailwind conversion, and an operational password recovery service remain future work.
+## 7. Deployment and CI/CD
+
+[CI workflow](../.github/workflows/ci.yml) is at the **Git root**, runs on PRs targeting `main` and pushes to `main`, and uses Ubuntu, pinned Python, PostgreSQL 18.6, extension setup, migration checks, the full suite, production checks and static collection. Its token has contents-read permission only. Test fixture seeding is isolated; no standalone demo seed step runs.
+
+[Render blueprint](render.yaml) uses the inner application root, Python 3.13.12, exact dependencies, Gunicorn, managed PostgreSQL, `/health/` and `main`. Render's `checksPass` integration is the sole planned automatic deployment mechanism: a protected PR merge produces a main push check, then Render deploys after CI passes. No competing deploy hook/job exists. RootDir filtering can skip redeploys for changes outside the application folder.
+
+Free-plan preparation runs migrations at build time because pre-deploy commands require paid compute. This requires backward-compatible migrations while old code may still run; irreversible/schema-breaking changes require a deliberate maintenance/recovery plan. Free database expiry/capacity and service cold starts must be reviewed before relying on availability. Do not deploy demo data.
+
+Production uses secure cookies, HTTPS redirect, explicit trusted proxy opt-in, configurable CSRF origins, manifest static files, console logging and one-hour host-only HSTS. HSTS subdomain/preload advisory checks are deliberately silenced until domain policy is confirmed. This is configuration preparation, not proof of production security.
+
+**External setup and observed delivery remain pending.** Follow [Render deployment and GitHub setup guide](docs/RENDER_DEPLOYMENT_GUIDE.md). No public URL is invented. CI/CD assessment completion requires a successful hosted PR run and a real merged PR resulting in a successful public deployment.
+
+## 8. AI Reflection
+
+1. **AI use across sections:** observed assistance includes source/design review, API remediation/verification, PDF audits, documentation and current CI/production preparation. Cloud deployment has not occurred. **TODO (developer): confirm original design/API authorship and actual AI use in each section.**
+2. **Useful suggestion and actual prompt:** the boundary guard/regressions fixed availability on `9999-12-31`. Recorded triggering instruction: “Begin Task 4 now. Verify the running application against PostgreSQL, fix confirmed defects and produce the verification report.” **TODO (developer): confirm this personal example or supply your preferred actual prompt.**
+3. **Wrong/incomplete output:** AI initially expected rescheduling into a doctor-free slot to succeed despite that patient's existing conflict. The API correctly returned 409; the harness was corrected and rerun. This is an evidenced AI testing mistake; application defect authorship is not inferred. **TODO (developer): confirm or replace with your own evidenced experience.**
+4. **Independent decisions:** **TODO (developer): identify two decisions made without AI and why you trusted your own judgment.** No AI-written technical rationale is attributed as an independent human decision.
+
+## 9. Project Structure and Supporting Documentation
+
+```text
+<git-root>/
+├── .github/workflows/ci.yml
+├── .gitattributes
+└── clinic-appointment-booking-system/
+    ├── manage.py, requirements.txt, render.yaml, .env.example
+    ├── config/       # settings, URLs, WSGI, health and production tests
+    ├── clinic/       # models, services, API/serializer, forms, views, tests
+    │   ├── migrations/  # 0001–0004; interval guards retained
+    │   └── management/commands/seed_demo.py
+    ├── scripts/render-build.sh
+    ├── templates/, static/
+    └── docs/
+```
+
+- [Original four-section assessment](<Savannah Informatics Backend Assessment (AI) (1).pdf>) — source of truth.
+- [Deployment guide](docs/RENDER_DEPLOYMENT_GUIDE.md) — exact setup, validation, rollback and pending external evidence.
+- [API reference](docs/API_REFERENCE.md) and [local development guide](docs/LOCAL_DEVELOPMENT_GUIDE.md).
+- [Final audit](docs/FINAL_ASSESSMENT_COMPLIANCE_AUDIT.md) — historical pre-CI matrix with current preparation note.
+- [Functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md), [earlier audit](docs/ASSESSMENT_COMPLIANCE_AUDIT.md), [implementation history](docs/IMPLEMENTATION_REPORT.md).
+
+Submission status: system design content documented (historical timing unverified); API/bonuses verified locally; delivery configuration prepared but external execution unverified; reflection incomplete. Supporting historical reports are preserved. No commit, push or deployment occurred in this milestone.

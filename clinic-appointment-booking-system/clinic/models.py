@@ -50,6 +50,7 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.PROTECT, related_name='appointments')
     starts_at = models.DateTimeField()
     reason = models.CharField(max_length=200, blank=True)
+    cancellation_reason = models.CharField(max_length=500, blank=True, default='')
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.CONFIRMED)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:

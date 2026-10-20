@@ -1,0 +1,33 @@
+{# Contact strip omitted until verified Savannah contact details are configured. #}
+<header class="public-header" data-public-header>
+  <div class="public-header-inner">
+    <div class="public-header-brand" data-nav-background>
+      {% include 'components/brand.html' %}
+    </div>
+    <button class="icon-button public-menu-trigger" type="button" data-nav-trigger="public-navigation" aria-controls="public-navigation" aria-expanded="false" aria-label="Open website navigation">
+      {% include 'partials/icon.html' with name='menu' %}<span>Menu</span>
+    </button>
+    {% include 'components/mobile_navigation.html' with panel_id='public-navigation' %}
+    <div class="public-nav-panel" id="public-navigation" data-nav-panel data-nav-breakpoint="1119px" aria-label="Website navigation">
+      <div class="public-drawer-heading">
+        <span class="public-drawer-title">Explore Savannah</span>
+        <button class="icon-button" type="button" data-nav-close aria-label="Close navigation">{% include 'partials/icon.html' with name='close' %}</button>
+      </div>
+      <nav class="public-nav" aria-label="Website">
+        <a href="{% url 'home' %}" data-page-home{% if public_home_active %} class="active" aria-current="page"{% endif %}>Home</a>
+        <a href="{% url 'doctors' %}"{% if public_doctors_active %} class="active" aria-current="page"{% endif %}>Find Doctors</a>
+        <a href="{% url 'home' %}#how-it-works" data-section="how-it-works">How It Works</a>
+      </nav>
+      <nav class="public-nav-actions" aria-label="Account">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'account' %}">My Account</a>
+        <a class="button" href="{{ workspace_url }}">My Workspace</a>
+        {% else %}
+        <a href="{% url 'login' %}">Sign In</a>
+        <a class="button" href="{% url 'book' %}">Book an Appointment</a>
+        {% endif %}
+      </nav>
+      <p class="public-drawer-note">Thoughtful care.<br>A simpler appointment.</p>
+    </div>
+  </div>
+</header>

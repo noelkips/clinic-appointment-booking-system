@@ -39,3 +39,11 @@ class ScheduleForm(forms.ModelForm):
         model = DoctorAvailability
         fields = ('doctor', 'weekday', 'start_time', 'end_time')
         widgets = {'start_time': forms.TimeInput(attrs={'type': 'time'}), 'end_time': forms.TimeInput(attrs={'type': 'time'})}
+
+
+class CancellationForm(forms.Form):
+    reason = forms.CharField(max_length=500, label='Cancellation reason', widget=forms.Textarea(attrs={'rows': 3}))
+
+    def clean_reason(self):
+        from .services import validate_cancellation_reason
+        return validate_cancellation_reason(self.cleaned_data['reason'])

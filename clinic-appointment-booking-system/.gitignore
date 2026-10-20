@@ -26,3 +26,8 @@ staticfiles/
 .local/
 .write-check
 docs/LOCAL_TEST_ACCOUNTS.md
+
+# SQLite journals and other local SQLite filenames
+*.sqlite
+*.sqlite-*
+*.sqlite3-*
