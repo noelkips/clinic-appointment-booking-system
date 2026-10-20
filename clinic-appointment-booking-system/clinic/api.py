@@ -1,7 +1,8 @@
 ﻿from datetime import date
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, OperationalError
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -11,18 +12,22 @@ from .services import available_slots, book_appointment, change_appointment, rol
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('id', 'patient', 'doctor', 'starts_at', 'reason', 'status', 'created_at')
-        read_only_fields = ('patient', 'status', 'created_at')
+        fields = ('id', 'patient', 'doctor', 'starts_at', 'reason', 'cancellation_reason', 'status', 'created_at')
+        read_only_fields = ('patient', 'status', 'created_at', 'cancellation_reason')
         validators = []  # The locked service returns conflicts consistently as HTTP 409.
 
 def mutation_error(exc):
+    if isinstance(exc, OperationalError):
+        if 'locked' not in str(exc).lower() and 'busy' not in str(exc).lower():
+            raise exc
+        return Response({'detail': 'Booking data is busy. Refresh availability and retry.'}, status=409)
     if isinstance(exc, PermissionDenied):
         return Response({'detail': 'Forbidden.'}, status=403)
     if isinstance(exc, Appointment.DoesNotExist):
         return Response({'detail': 'Appointment not found.'}, status=404)
     if isinstance(exc, IntegrityError):
         return Response({'detail': 'That slot is no longer available.'}, status=409)
-    return Response({'detail': exc.messages}, status=409 if isinstance(exc, SlotConflict) else 400)
+    return Response(exc.message_dict if hasattr(exc, 'message_dict') else {'detail': exc.messages}, status=409 if isinstance(exc, SlotConflict) else 400)
 
 @api_view(['POST'])
 def create_appointment(request):
@@ -33,7 +38,7 @@ def create_appointment(request):
         return Response(serializer.errors, status=400)
     try:
         obj = book_appointment(request.user, serializer.validated_data['doctor'], serializer.validated_data['starts_at'], serializer.validated_data.get('reason', ''))
-    except (ValidationError, PermissionDenied, IntegrityError) as exc:
+    except (ValidationError, PermissionDenied, IntegrityError, OperationalError) as exc:
         return mutation_error(exc)
     return Response(AppointmentSerializer(obj).data, status=201)
 
@@ -49,8 +54,8 @@ def availability(request, pk):
 @api_view(['PATCH'])
 def cancel_appointment(request, pk):
     try:
-        obj = change_appointment(request.user, pk, 'cancelled')
-    except (ValidationError, PermissionDenied, IntegrityError, Appointment.DoesNotExist) as exc:
+        obj = change_appointment(request.user, pk, 'cancelled', cancellation_reason=request.data.get('reason'))
+    except (ValidationError, PermissionDenied, IntegrityError, OperationalError, Appointment.DoesNotExist) as exc:
         return mutation_error(exc)
     return Response(AppointmentSerializer(obj).data)
 
@@ -62,7 +67,7 @@ def reschedule_appointment(request, pk):
         return Response({'starts_at': exc.detail}, status=400)
     try:
         obj = change_appointment(request.user, pk, 'rescheduled', starts)
-    except (ValidationError, PermissionDenied, IntegrityError, Appointment.DoesNotExist) as exc:
+    except (ValidationError, PermissionDenied, IntegrityError, OperationalError, Appointment.DoesNotExist) as exc:
         return mutation_error(exc)
     return Response(AppointmentSerializer(obj).data)
 
@@ -70,4 +75,4 @@ def reschedule_appointment(request, pk):
 def patient_appointments(request, pk):
     if role(request.user) != 'administrator' and (role(request.user) != 'patient' or request.user.patient_profile.pk != pk):
         return Response({'detail': 'Forbidden.'}, status=403)
-    return Response(AppointmentSerializer(Appointment.objects.filter(patient_id=pk), many=True).data)
+    return Response(AppointmentSerializer(Appointment.objects.filter(patient_id=pk, status='confirmed', starts_at__gt=timezone.now()).order_by('starts_at', 'pk'), many=True).data)

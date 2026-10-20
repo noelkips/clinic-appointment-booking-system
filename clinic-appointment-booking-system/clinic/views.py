@@ -5,14 +5,14 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import Count, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import View
-from .forms import AppointmentForm, DoctorForm, RegisterForm, ScheduleForm, SignInForm
+from .forms import CancellationForm, AppointmentForm, DoctorForm, RegisterForm, ScheduleForm, SignInForm
 from .models import Appointment, AppointmentEvent, Doctor, DoctorAvailability, Patient
 from .services import available_slots, book_appointment, change_appointment, role, visible_appointments
 
@@ -115,6 +115,13 @@ def doctor_dashboard(request):
     return dashboard_page(request)
 
 
+@login_required
+def doctor_schedule(request):
+    if role(request.user) != 'doctor':
+        raise PermissionDenied
+    return page(request, 'dashboard/schedule.html', {'periods': request.user.doctor_profile.availability.all()})
+
+
 def dashboard_page(request):
     qs = visible_appointments(request.user)
     now = timezone.now()
@@ -144,7 +151,9 @@ def book(request):
         else:
             try:
                 book_appointment(request.user, form.cleaned_data['doctor'], form.cleaned_data['starts_at'], form.cleaned_data['reason'])
-            except (ValidationError, IntegrityError) as exc:
+            except (ValidationError, IntegrityError, OperationalError) as exc:
+                if isinstance(exc, OperationalError) and not any(word in str(exc).lower() for word in ('locked', 'busy')):
+                    raise
                 form.add_error(None, '; '.join(exc.messages) if isinstance(exc, ValidationError) else 'Slot no longer available.')
             else:
                 messages.success(request, 'Your appointment is confirmed.')
@@ -156,6 +165,7 @@ def book(request):
 def appointment_detail(request, pk):
     obj = get_object_or_404(visible_appointments(request.user), pk=pk)
     error = None
+    cancellation_form = CancellationForm(request.POST if request.method == 'POST' and request.POST.get('action') == 'cancelled' else None)
     if request.method == 'POST':
         if role(request.user) not in ('patient', 'administrator'):
             raise PermissionDenied
@@ -167,15 +177,19 @@ def appointment_detail(request, pk):
                 starts = DateTimeField().clean(request.POST.get('starts_at'))
             except ValidationError:
                 error = 'Choose an available time.'
+        if action == 'cancelled' and not cancellation_form.is_valid():
+            error = 'Provide a nonblank cancellation reason of at most 500 characters.'
         if not error:
             try:
-                change_appointment(request.user, pk, action, starts)
-            except (ValidationError, IntegrityError) as exc:
+                change_appointment(request.user, pk, action, starts, cancellation_reason=cancellation_form.cleaned_data['reason'] if action == 'cancelled' else None)
+            except (ValidationError, IntegrityError, OperationalError) as exc:
+                if isinstance(exc, OperationalError) and not any(word in str(exc).lower() for word in ('locked', 'busy')):
+                    raise
                 error = '; '.join(exc.messages) if isinstance(exc, ValidationError) else 'Slot no longer available.'
             else:
                 messages.success(request, 'Appointment updated.')
                 return redirect('appointment-detail', pk=pk)
-    return page(request, 'appointments/detail.html', {'appointment': obj, 'error': error, 'can_change': role(request.user) in ('patient','administrator') and obj.status=='confirmed' and obj.starts_at>timezone.now()})
+    return page(request, 'appointments/detail.html', {'appointment': obj, 'error': error, 'cancellation_form': cancellation_form, 'can_change': role(request.user) in ('patient','administrator') and obj.status=='confirmed' and obj.starts_at>timezone.now()})
 
 
 @admin_required

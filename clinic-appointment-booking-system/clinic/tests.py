@@ -137,7 +137,7 @@ class ClinicTests(TestCase):
         with self.assertRaises(ValidationError): row.full_clean()
     def test_cancel_releases_slot(self):
         a=self.create()
-        r=self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json')
+        r=self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/cancel',{'reason':'Cannot attend'},format='json')
         self.assertEqual(r.status_code,200)
         self.assertIn(self.start,available_slots(self.doctor,self.day))
     def test_reschedule_aware_releases_old_slot(self):
@@ -153,12 +153,12 @@ class ClinicTests(TestCase):
         a.refresh_from_db();self.assertEqual(a.starts_at,self.start)
     def test_other_patient_cannot_mutate(self):
         a=self.create()
-        self.assertEqual(self.api(self.other_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json').status_code,404)
+        self.assertEqual(self.api(self.other_user).patch(f'/api/appointments/{a.pk}/cancel',{'reason':'Cannot attend'},format='json').status_code,404)
     def test_doctor_cannot_mutate(self):
         a=self.create()
-        self.assertEqual(self.api(self.doctor_user).patch(f'/api/appointments/{a.pk}/cancel',{},format='json').status_code,403)
+        self.assertEqual(self.api(self.doctor_user).patch(f'/api/appointments/{a.pk}/cancel',{'reason':'Cannot attend'},format='json').status_code,403)
     def test_cancelled_cannot_reschedule(self):
-        a=self.create();change_appointment(self.patient_user,a.pk,'cancelled')
+        a=self.create();change_appointment(self.patient_user,a.pk,'cancelled',cancellation_reason='Cannot attend')
         self.assertEqual(self.api(self.patient_user).patch(f'/api/appointments/{a.pk}/reschedule',{'starts_at':self.start.isoformat()},format='json').status_code,400)
     def test_root_api_alias(self):
         self.assertEqual(self.api(self.patient_user).post('/appointments',{'doctor':self.doctor.pk,'starts_at':self.start.isoformat()},format='json').status_code,201)
