@@ -6,7 +6,19 @@ A Django/DRF appointment system for a small clinic with five demonstration docto
 
 Stack: Python 3.13, Django 5.2, Django REST Framework, PostgreSQL, Django Templates, Tailwind standalone CLI and vanilla JavaScript. No Node build is required.
 
-Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noelkips/clinic-appointment-booking-system), confirmed as Git origin; reviewer access/current remote contents remain unverified. **Live URL: pending.** CI and Render configuration are prepared locally; no push, cloud deployment or successful hosted run is claimed.
+Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noelkips/clinic-appointment-booking-system), confirmed as Git origin; reviewer access/current remote contents remain unverified. The owner reports successful GitHub CI and deployment; live public checks and remaining demonstration-account verification are below.
+
+### Live Demo and Test Accounts
+
+[Live application](https://savannah-clinic-duil.onrender.com/) ? [Login](https://savannah-clinic-duil.onrender.com/accounts/login/). Read-only checks confirmed homepage, health and directory HTTP 200; login retrieval timed out. This does not verify account login or database contents.
+
+| Role | Prepared username ? not yet verified on Render | Features |
+|---|---|---|
+| Administrator | demo_admin | Staff dashboard/appointment oversight; not a superuser |
+| Doctor | demo_doctor | Assigned visits and weekly schedule |
+| Patient | demo_patient | Booking, cancellation and rescheduling |
+
+All proposed accounts and records are fictional assessment fixtures. **Hosted provisioning and account verification are pending**; do not assume these credentials already exist. After provisioning, obtain the three distinct passwords privately from the project owner through a password manager/secure assessor channel. No passwords are published here. See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [actual verification status](docs/LIVE_DEMO_VERIFICATION.md) and [cleanup plan](docs/DEMO_DATA_CLEANUP_GUIDE.md). The existing local-only seeder remains restricted; the new hosted command requires explicit target confirmation and is never run automatically.
 
 ## 2. System Design and Technical Decisions
 
@@ -80,7 +92,7 @@ python manage.py createsuperuser
 python manage.py runserver 127.0.0.1:8000
 ```
 
-Open `http://127.0.0.1:8000/`. Fresh data needs Doctor/DoctorAvailability records. Existing demonstration data needs no reseeding. Inspect `python manage.py seed_demo --help` for development-only safeguards; private accounts remain in ignored `docs/LOCAL_TEST_ACCOUNTS.md`. Never seed production.
+Open `http://127.0.0.1:8000/`. Fresh data needs Doctor/DoctorAvailability records. Existing demonstration data needs no reseeding. Inspect `python manage.py seed_demo --help` for development-only safeguards; private accounts remain in ignored `docs/LOCAL_TEST_ACCOUNTS.md`. Do not use that local-only command on Render; use only the separately gated assessment process above.
 
 Compiled CSS is included. If rebuilding with the separately obtained standalone Tailwind v4.1.18 binary:
 
@@ -104,7 +116,7 @@ python manage.py test --settings=config.test_settings --keepdb --noinput --verbo
 python manage.py test config.test_production --settings=config.test_settings --keepdb --noinput
 ```
 
-**Current local result: 88 tests passed in 31.546s on PostgreSQL, no skips**, including both concurrent booking scenarios and five new health/proxy checks. Production checks/static/WSGI smoke checks also passed after excluding Tailwind source from collection. See [deployment validation and limits](docs/RENDER_DEPLOYMENT_GUIDE.md#local-validation).
+**Current local result: 100 tests passed in 36.647s on PostgreSQL, no skips**, including concurrency, secret/health/proxy checks and eight new assessment-seeding regressions. Production checks/static/WSGI smoke checks also passed after excluding Tailwind source from collection. See [deployment validation and limits](docs/RENDER_DEPLOYMENT_GUIDE.md#local-validation).
 
 Historical recorded results: developer-confirmed 80/80 PostgreSQL milestone; 60 targeted PostgreSQL tests; 57 reversible database checks; 63 Chrome viewport checks and seven interaction checks. These are distinct earlier results, not freshly rerun browser tests. Full current PostgreSQL browser booking/cancellation/rescheduling submissions remain manually unverified. See [functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md).
 
@@ -114,11 +126,11 @@ Historical recorded results: developer-confirmed 80/80 PostgreSQL milestone; 60 
 
 [Render blueprint](render.yaml) uses the inner application root, Python 3.13.12, exact dependencies, Gunicorn, managed PostgreSQL, `/health/` and `main`. Render's `checksPass` integration is the sole planned automatic deployment mechanism: a protected PR merge produces a main push check, then Render deploys after CI passes. No competing deploy hook/job exists. RootDir filtering can skip redeploys for changes outside the application folder.
 
-Free-plan preparation runs migrations at build time because pre-deploy commands require paid compute. This requires backward-compatible migrations while old code may still run; irreversible/schema-breaking changes require a deliberate maintenance/recovery plan. Free database expiry/capacity and service cold starts must be reviewed before relying on availability. Do not deploy demo data.
+Free-plan preparation runs migrations at build time because pre-deploy commands require paid compute. This requires backward-compatible migrations while old code may still run; irreversible/schema-breaking changes require a deliberate maintenance/recovery plan. Free database expiry/capacity and service cold starts must be reviewed before relying on availability. Use only the explicitly authorized assessment-fixture process for this temporary demo; never import local demo superusers or real clinical data.
 
 Production uses secure cookies, HTTPS redirect, explicit trusted proxy opt-in, configurable CSRF origins, manifest static files, console logging and one-hour host-only HSTS. HSTS subdomain/preload advisory checks are deliberately silenced until domain policy is confirmed. This is configuration preparation, not proof of production security.
 
-**External setup and observed delivery remain pending.** Follow [Render deployment and GitHub setup guide](docs/RENDER_DEPLOYMENT_GUIDE.md). No public URL is invented. CI/CD assessment completion requires a successful hosted PR run and a real merged PR resulting in a successful public deployment.
+**The owner reports hosted CI/deployment success; end-to-end merge/deployment evidence has not been independently audited in this task.** Follow [Render deployment and GitHub setup guide](docs/RENDER_DEPLOYMENT_GUIDE.md). The live URL above was checked read-only. CI/CD assessment completion requires a successful hosted PR run and a real merged PR resulting in a successful public deployment.
 
 ## 8. AI Reflection
 
@@ -144,10 +156,10 @@ Production uses secure cookies, HTTPS redirect, explicit trusted proxy opt-in, c
     └── docs/
 ```
 
-- [Original four-section assessment](<Savannah Informatics Backend Assessment (AI) (1).pdf>) — source of truth.
+- Original four-section assessment is the source of truth; the expected PDF is absent from this checkout. Restore your original review copy before submission.
 - [Deployment guide](docs/RENDER_DEPLOYMENT_GUIDE.md) — exact setup, validation, rollback and pending external evidence.
 - [API reference](docs/API_REFERENCE.md) and [local development guide](docs/LOCAL_DEVELOPMENT_GUIDE.md).
 - [Final audit](docs/FINAL_ASSESSMENT_COMPLIANCE_AUDIT.md) — historical pre-CI matrix with current preparation note.
 - [Functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md), [earlier audit](docs/ASSESSMENT_COMPLIANCE_AUDIT.md), [implementation history](docs/IMPLEMENTATION_REPORT.md).
 
-Submission status: system design content documented (historical timing unverified); API/bonuses verified locally; delivery configuration prepared but external execution unverified; reflection incomplete. Supporting historical reports are preserved. No commit, push or deployment occurred in this milestone.
+Submission status: system design content documented (historical timing unverified); API/bonuses verified locally; delivery configuration prepared but external execution unverified; reflection incomplete. Supporting historical reports are preserved. No commit, push, deployment or hosted seeding occurred in this demo-preparation task.
