@@ -18,7 +18,9 @@ services:
           name: savannah-postgres
           property: connectionString
       - key: DJANGO_SECRET_KEY
-        generateValue: true
+        # Render's generated base64 value is 44 characters; Django requires >=50.
+        # Supply a persistent secrets.token_urlsafe(64) value in the Dashboard.
+        sync: false
       - key: DJANGO_DEBUG
         value: 'False'
       - key: DJANGO_TRUST_PROXY
