@@ -10,15 +10,19 @@ Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noel
 
 ### Live Demo and Test Accounts
 
-[Live application](https://savannah-clinic-duil.onrender.com/) ? [Login](https://savannah-clinic-duil.onrender.com/accounts/login/). Read-only checks confirmed homepage, health and directory HTTP 200; login retrieval timed out. This does not verify account login or database contents.
+[Live application](https://savannah-clinic-diul.onrender.com/) ? [Login](https://savannah-clinic-diul.onrender.com/accounts/login/).
 
-| Role          | Prepared username ? not yet verified on Render | Features                                               |
-| ------------- | ---------------------------------------------- | ------------------------------------------------------ |
-| Administrator | demo_admin                                     | Staff dashboard/appointment oversight; not a superuser |
-| Doctor        | demo_doctor                                    | Assigned visits and weekly schedule                    |
-| Patient       | demo_patient                                   | Booking, cancellation and rescheduling                 |
+These are the owner-supplied demonstration credentials. Hosted account provisioning and successful logins have not been independently verified.
 
-No passwords are published here. See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [actual verification status](docs/LIVE_DEMO_VERIFICATION.md) and [cleanup plan](docs/DEMO_DATA_CLEANUP_GUIDE.md). The existing local-only seeder remains restricted; the new hosted command requires explicit target confirmation and is never run automatically.
+| Role | Username | Password | Features |
+| --- | --- | --- | --- |
+| Administrator | `demo_admin` | `SavannahAdmin#2026!SecureTest84Savannah@1234` | Staff dashboard and appointment oversight; not a superuser |
+| Doctor | `demo_doctor` | `ClinicDoctor@2026#Savannah@1234` | Assigned visits and weekly schedule |
+| Patient | `demo_patient` | `PatientPortal#2026!TestLogin93Savannah@1234` | Booking, cancellation and rescheduling |
+
+These credentials are for the fictional demonstration environment only. Their corresponding Render variables are `ASSESSMENT_ADMINISTRATOR_PASSWORD`, `ASSESSMENT_DOCTOR_PASSWORD` and `ASSESSMENT_PATIENT_PASSWORD`. Updating this README does not create accounts or change database passwords.
+
+See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [verification status](docs/LIVE_DEMO_VERIFICATION.md) and [cleanup plan](docs/DEMO_DATA_CLEANUP_GUIDE.md). The local-only seeder remains restricted; the temporary Render deployment seeding procedure requires explicit authorization and is disabled by default.
 
 ## 2. System Design and Technical Decisions
 
