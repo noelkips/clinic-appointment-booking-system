@@ -10,15 +10,16 @@ Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noel
 
 ### Live Demo and Test Accounts
 
-[Live application](https://savannah-clinic-duil.onrender.com/) ? [Login](https://savannah-clinic-duil.onrender.com/accounts/login/). Read-only checks confirmed homepage, health and directory HTTP 200; login retrieval timed out. This does not verify account login or database contents.
+[Live application](https://savannah-clinic-diul.onrender.com/) ? [Login](https://savannah-clinic-diul.onrender.com/accounts/login/). Owner-supplied URL; current reachability, database contents and reviewer logins remain unverified. Earlier checks used a different hostname.
 
-| Role | Prepared username ? not yet verified on Render | Features |
+| Role | Prepared username (not yet verified on Render) | Features |
 |---|---|---|
 | Administrator | demo_admin | Staff dashboard/appointment oversight; not a superuser |
 | Doctor | demo_doctor | Assigned visits and weekly schedule |
 | Patient | demo_patient | Booking, cancellation and rescheduling |
 
-All proposed accounts and records are fictional assessment fixtures. **Hosted provisioning and account verification are pending**; do not assume these credentials already exist. After provisioning, obtain the three distinct passwords privately from the project owner through a password manager/secure assessor channel. No passwords are published here. See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [actual verification status](docs/LIVE_DEMO_VERIFICATION.md) and [cleanup plan](docs/DEMO_DATA_CLEANUP_GUIDE.md). The existing local-only seeder remains restricted; the new hosted command requires explicit target confirmation and is never run automatically.
+
+Hosted provisioning and login verification remain pending. After provisioning, authorized reviewers can obtain the three distinct passwords privately from the project owner through a password manager or agreed secure assessor channel. No passwords are published here. Use the guarded workstation procedure in [Render deployment guide](docs/RENDER_DEPLOYMENT_GUIDE.md#14-explicit-one-time-demo-seeding-on-render-free). See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [actual verification status](docs/LIVE_DEMO_VERIFICATION.md) and [cleanup plan](docs/DEMO_DATA_CLEANUP_GUIDE.md). The existing local-only seeder remains restricted; the new hosted command requires explicit target confirmation and is never run automatically.
 
 ## 2. System Design and Technical Decisions
 
@@ -28,7 +29,11 @@ PostgreSQL provides transactions, row locks and GiST exclusion constraints. Serv
 
 Slots are derived from weekly periods rather than pre-generated rows. This supports breaks without extra slot storage; leave, holidays, overnight shifts and variable durations need future policy. Dashboards currently use repeated counts and unpaginated lists. Event history does not retain old/new timestamps. These are scalability/history trade-offs, not missing mandatory endpoints.
 
-This describes the implemented design retrospectively. **TODO (developer): provide original design-before-code evidence if available.** No personal decision history is inferred.
+This describes the implemented design retrospectively.
+I did not drew the design but I did write a comprehensive 'SRS' as my understanding on the assign
+
+
+
 
 ## 3. Data Models and Architecture
 

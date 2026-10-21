@@ -1,3 +1,5 @@
+> Updated 21 October 2026: use the guarded executable procedure in [Render guide section 14](RENDER_DEPLOYMENT_GUIDE.md#14-explicit-one-time-demo-seeding-on-render-free). It enforces external-host TLS verification and adds read-only reporting. The older direct-command procedure below is background reference. Hosted execution remains pending explicit authorization.
+
 ﻿# Live assessment demonstration: operation and verification
 
 This is a temporary fictional assessment environment, not a clinical deployment. No live seed has been executed by this change. The owner supplied `https://savannah-clinic-duil.onrender.com/`; public reachability checks are recorded below. Public pages cannot establish whether a database is empty.

@@ -1,3 +1,9 @@
+## Investigation update: 21 October 2026 (Africa/Nairobi)
+
+No production seeding, login attempt, network change or authenticated database inspection was performed. Live doctors/patients/appointments and slots remain UNKNOWN. The owner supplied `https://savannah-clinic-diul.onrender.com/`; the earlier report below used `duil` and does not verify the current URL. The current web fetch failed.
+
+`910b248` contains the hosted seeder on development; local main/cached origin/main remain at `c5910f1`. Remote `git ls-remote` failed due to unavailable proxy/network; current remote merge/deployed SHA are unverified. Local .env points to loopback, not Render. Blueprint external access is disabled (`ipAllowList: []`); actual Dashboard allowlist is unverified. No credentials were printed. Follow Render guide section 14 after owner authorization, then replace UNKNOWN counts with actual verification JSON and live browser login results.
+
 ﻿# Live demo verification status
 
 Date: 20 October 2026, Africa/Nairobi. Working branch: development. No hosted database connection or credentials were supplied to the agent; no live seeding/mutations/restart were performed. Do not confuse the local test database with Render.

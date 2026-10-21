@@ -45,6 +45,22 @@ class AssessmentDemoTests(TestCase):
         User.objects.create_user('demo_patient')
         with self.assertRaises(CommandError):self.seed()
         self.assertEqual(User.objects.count(),1);self.assertFalse(Doctor.objects.exists())
+    def test_read_only_verification_checks_roles_slots_and_passwords(self):
+        self.seed()
+        before=list(Appointment.objects.values())
+        hashes=list(User.objects.values_list('pk','password'))
+        passwords=[self.passwords['ASSESSMENT_'+kind+'_PASSWORD'] for kind in ('ADMINISTRATOR','DOCTOR','PATIENT')]
+        output=io.StringIO()
+        with patch('clinic.management.commands.verify_assessment_demo.getpass.getpass',side_effect=passwords):
+            call_command('verify_assessment_demo',stdout=output)
+        self.assertIn('future_slots_next_14_days',output.getvalue())
+        self.assertIn('"demo_admin": true',output.getvalue())
+        self.assertTrue(all(value not in output.getvalue() for value in passwords))
+        self.assertEqual(before,list(Appointment.objects.values()))
+        self.assertEqual(hashes,list(User.objects.values_list('pk','password')))
+        with patch('clinic.management.commands.verify_assessment_demo.getpass.getpass',return_value='wrong'):
+            with self.assertRaises(CommandError):
+                call_command('verify_assessment_demo',stdout=io.StringIO())
     def test_explicit_target_and_flag_required(self):
         with self.assertRaises(CommandError):call_command('seed_assessment_demo',confirm_database='wrong')
         with patch.dict(os.environ,{'ASSESSMENT_DEMO_ENABLED':'False'}):
