@@ -1,6 +1,7 @@
 """Read-only fixture and authentication verification; creates no login sessions."""
 import getpass
 import json
+import os
 from datetime import timedelta
 
 from django.contrib.auth import authenticate
@@ -15,7 +16,12 @@ from clinic.services import available_slots, role
 class Command(BaseCommand):
     help = 'Read-only totals, fixture coverage, future slots and three password/role checks.'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--no-input', action='store_true', help='Read passwords from environment; never prompt.')
+
     def handle(self, *args, **options):
+        if options['no_input'] and any(not os.getenv('ASSESSMENT_' + kind.upper() + '_PASSWORD') for kind in PRIMARY):
+            raise CommandError('Missing required assessment password environment variables.')
         doctors = Doctor.objects.filter(user__groups__name=GROUP)
         patients = Patient.objects.filter(user__groups__name=GROUP)
         visits = Appointment.objects.filter(doctor__in=doctors, patient__in=patients,
@@ -39,7 +45,8 @@ class Command(BaseCommand):
             report['future_slots_next_14_days'][doctor.user.username] = {
                 'count': len(slots), 'first': slots[0].isoformat() if slots else None}
         for expected, username in PRIMARY.items():
-            password = getpass.getpass(f'{username} password (hidden): ')
+            password = (os.environ['ASSESSMENT_' + expected.upper() + '_PASSWORD'] if options['no_input']
+                        else getpass.getpass(f'{username} password (hidden): '))
             user = authenticate(username=username, password=password)
             owned = user is not None and user.groups.filter(name=GROUP).exists()
             report['logins'][username] = bool(owned and role(user) == expected and not user.is_superuser)

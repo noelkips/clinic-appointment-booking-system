@@ -1,3 +1,5 @@
+> Current internal-only CI/CD procedure: [Render guide section 15](RENDER_DEPLOYMENT_GUIDE.md#15-authorized-one-time-seed-inside-render-cicd). External access remains disabled. Earlier workstation procedures below are historical alternatives, not required for this deployment.
+
 > Updated 21 October 2026: use the guarded executable procedure in [Render guide section 14](RENDER_DEPLOYMENT_GUIDE.md#14-explicit-one-time-demo-seeding-on-render-free). It enforces external-host TLS verification and adds read-only reporting. The older direct-command procedure below is background reference. Hosted execution remains pending explicit authorization.
 
 ﻿# Live assessment demonstration: operation and verification

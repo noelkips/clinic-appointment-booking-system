@@ -1,4 +1,4 @@
-﻿"""Explicit, additive hosted assessment fixtures; never called by a build."""
+"""Explicit, additive hosted assessment fixtures; available through an explicitly guarded build opt-in."""
 import getpass
 import os
 from datetime import datetime, time, timedelta
@@ -28,6 +28,7 @@ class Command(BaseCommand):
     help = 'Inspect or explicitly create isolated assessment fixtures. Never resets/deletes data.'
 
     def add_arguments(self, parser):
+        parser.add_argument('--no-input', action='store_true', help='Require password environment variables; never prompt.')
         parser.add_argument('--inspect', action='store_true', help='Read-only counts and intended-name collision report.')
         parser.add_argument('--confirm-database', help='Must exactly match the configured database NAME.')
         parser.add_argument('--rotate-passwords', action='store_true', help='Explicitly change ONLY the three owned reviewer passwords.')
@@ -40,8 +41,10 @@ class Command(BaseCommand):
             self.stdout.write('Intended usernames already present: ' + str(User.objects.filter(username__in=[r[0] for r in roster()]).count()))
             self.stdout.write('Database name for explicit confirmation: ' + str(connection.settings_dict['NAME']))
             return
-        if os.getenv('ASSESSMENT_DEMO_ENABLED') != 'True' or options['confirm_database'] != connection.settings_dict['NAME']:
+        if os.getenv('ASSESSMENT_DEMO_ENABLED', '').lower() != 'true' or options['confirm_database'] != connection.settings_dict['NAME']:
             raise CommandError('Require ASSESSMENT_DEMO_ENABLED=True and exact --confirm-database. Inspect first.')
+        if options['no_input'] and any(not os.getenv('ASSESSMENT_' + kind.upper() + '_PASSWORD') for kind in PRIMARY):
+            raise CommandError('Missing required assessment password environment variables; no writes performed.')
         passwords = {kind: os.getenv('ASSESSMENT_' + kind.upper() + '_PASSWORD') or getpass.getpass(f'{kind} assessment password: ') for kind in PRIMARY}
         if len(set(passwords.values())) != 3 or any(len(v) < 24 or len(set(v)) < 5 for v in passwords.values()):
             raise CommandError('Use three distinct randomly generated passwords, each at least 24 characters with five distinct characters.')
