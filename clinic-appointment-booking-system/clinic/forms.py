@@ -23,6 +23,12 @@ class RegisterForm(UserCreationForm):
         return user
 
 class AppointmentForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        value = self.data.get('starts_at') if self.is_bound else self.initial.get('starts_at')
+        if value:
+            self.fields['starts_at'].widget.choices = [(value, value)]
+
     doctor = forms.ModelChoiceField(queryset=Doctor.objects.filter(is_available=True, user__is_active=True))
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     starts_at = forms.DateTimeField(widget=forms.Select(), label='Available time')

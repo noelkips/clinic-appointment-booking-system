@@ -14,11 +14,11 @@ from django.utils import timezone
 from django.views import View
 from .forms import CancellationForm, AppointmentForm, DoctorForm, RegisterForm, ScheduleForm, SignInForm
 from .models import Appointment, AppointmentEvent, Doctor, DoctorAvailability, Patient
-from .services import available_slots, book_appointment, change_appointment, role, visible_appointments
+from .services import available_slots, book_appointment, change_appointment, role, visible_appointments, SlotConflict
 
 
-def page(request, template, context=None):
-    return render(request, template, {'current_role': role(request.user), 'today': timezone.localdate(), 'now': timezone.now(), **(context or {})})
+def page(request, template, context=None, status=200):
+    return render(request, template, {'current_role': role(request.user), 'today': timezone.localdate(), 'now': timezone.now(), **(context or {})}, status=status)
 
 
 def admin_required(view):
@@ -68,7 +68,7 @@ class RegisterView(View):
         if form.is_valid():
             login(request, form.save())
             return redirect('patient-dashboard')
-        return page(request, 'accounts/register.html', {'form': form})
+        return page(request, 'accounts/register.html', {'form': form}, status=400)
 
 
 def home(request):
@@ -143,8 +143,9 @@ def appointments(request):
 def book(request):
     if role(request.user) != 'patient':
         raise PermissionDenied
+    status = 400 if request.method == 'POST' else 200
     initial = {'doctor': request.GET.get('doctor'), 'date': request.GET.get('date'), 'starts_at': request.GET.get('slot')}
-    form = AppointmentForm(request.POST or None, initial=initial)
+    form = AppointmentForm(request.POST if request.method == 'POST' else None, initial=initial)
     if request.method == 'POST' and form.is_valid():
         if timezone.localtime(form.cleaned_data['starts_at']).date() != form.cleaned_data['date']:
             form.add_error('starts_at', 'The slot must match the selected date.')
@@ -154,17 +155,19 @@ def book(request):
             except (ValidationError, IntegrityError, OperationalError) as exc:
                 if isinstance(exc, OperationalError) and not any(word in str(exc).lower() for word in ('locked', 'busy')):
                     raise
+                status = 409 if isinstance(exc, (SlotConflict, IntegrityError, OperationalError)) else 400
                 form.add_error(None, '; '.join(exc.messages) if isinstance(exc, ValidationError) else 'Slot no longer available.')
             else:
                 messages.success(request, 'Your appointment is confirmed.')
                 return redirect('patient-dashboard')
-    return page(request, 'appointments/booking.html', {'form': form})
+    return page(request, 'appointments/booking.html', {'form': form}, status=status)
 
 
 @login_required
 def appointment_detail(request, pk):
     obj = get_object_or_404(visible_appointments(request.user), pk=pk)
     error = None
+    status = 200
     cancellation_form = CancellationForm(request.POST if request.method == 'POST' and request.POST.get('action') == 'cancelled' else None)
     if request.method == 'POST':
         if role(request.user) not in ('patient', 'administrator'):
@@ -185,11 +188,12 @@ def appointment_detail(request, pk):
             except (ValidationError, IntegrityError, OperationalError) as exc:
                 if isinstance(exc, OperationalError) and not any(word in str(exc).lower() for word in ('locked', 'busy')):
                     raise
+                status = 409 if isinstance(exc, (SlotConflict, IntegrityError, OperationalError)) else 400
                 error = '; '.join(exc.messages) if isinstance(exc, ValidationError) else 'Slot no longer available.'
             else:
                 messages.success(request, 'Appointment updated.')
                 return redirect('appointment-detail', pk=pk)
-    return page(request, 'appointments/detail.html', {'appointment': obj, 'error': error, 'cancellation_form': cancellation_form, 'can_change': role(request.user) in ('patient','administrator') and obj.status=='confirmed' and obj.starts_at>timezone.now()})
+    return page(request, 'appointments/detail.html', {'appointment': obj, 'error': error, 'cancellation_form': cancellation_form, 'submitted_date': request.POST.get('date', ''), 'submitted_start': request.POST.get('starts_at', ''), 'can_change': role(request.user) in ('patient','administrator') and obj.status=='confirmed' and obj.starts_at>timezone.now()}, status=status if not error or status != 200 else 400)
 
 
 @admin_required
@@ -253,12 +257,12 @@ def platform_doctors(request):
 @admin_required
 def platform_doctor(request, pk):
     obj = get_object_or_404(Doctor, pk=pk)
-    form = DoctorForm(request.POST or None, instance=obj)
+    form = DoctorForm(request.POST if request.method == 'POST' else None, instance=obj)
     if request.method=='POST' and form.is_valid():
         form.save()
         messages.success(request, 'Doctor profile updated.')
         return redirect('platform-doctors')
-    return page(request, 'platform/form.html', {'form': form, 'title': str(obj), 'subtitle': 'Update profile and availability', 'periods': obj.availability.all()})
+    return page(request, 'platform/form.html', {'form': form, 'title': str(obj), 'subtitle': 'Update profile and availability', 'periods': obj.availability.all()}, status=400 if form.is_bound else 200)
 
 
 @admin_required
@@ -278,7 +282,7 @@ def platform_patient(request, pk):
 
 @admin_required
 def platform_schedules(request):
-    form = ScheduleForm(request.POST or None)
+    form = ScheduleForm(request.POST if request.method == 'POST' else None)
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
             Doctor.objects.select_for_update().get(pk=form.cleaned_data['doctor'].pk)
@@ -291,7 +295,7 @@ def platform_schedules(request):
                 form.save()
                 messages.success(request, 'Working period added.')
                 return redirect('platform-schedules')
-    return page(request, 'platform/schedules.html', {'form': form, 'periods': DoctorAvailability.objects.select_related('doctor__user')})
+    return page(request, 'platform/schedules.html', {'form': form, 'periods': DoctorAvailability.objects.select_related('doctor__user')}, status=400 if form.is_bound else 200)
 
 
 @admin_required

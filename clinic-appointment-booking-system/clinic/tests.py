@@ -59,7 +59,7 @@ class ClinicTests(TestCase):
         self.assertTrue(hasattr(u,'patient_profile'))
     def test_anonymous_protected(self):
         self.assertEqual(self.client.get('/platform/').status_code,302)
-        self.assertEqual(self.api().get(f'/api/patients/{self.patient.pk}/appointments').status_code,403)
+        self.assertEqual(self.api().get(f'/api/patients/{self.patient.pk}/appointments').status_code,401)
     def test_platform_access(self):
         routes=['/platform/','/platform/appointments/','/platform/doctors/','/platform/patients/','/platform/schedules/','/platform/activity/']
         for user,expected in [(self.patient_user,403),(self.doctor_user,403),(self.admin,200)]:
@@ -130,7 +130,7 @@ class ClinicTests(TestCase):
     def test_missing_schedule_time_is_form_error(self):
         self.client.force_login(self.admin)
         r=self.client.post('/platform/schedules/',{'doctor':self.doctor.pk,'weekday':2,'end_time':'17:00'})
-        self.assertEqual(r.status_code,200)
+        self.assertEqual(r.status_code,400)
         self.assertIn('start_time',r.context['form'].errors)
     def test_reverse_period_rejected(self):
         row=DoctorAvailability(doctor=self.doctor,weekday=2,start_time=time(14),end_time=time(9))

@@ -39,7 +39,7 @@ class RemediationTests(TestCase):
             with self.subTest(body=body):
                 response = self.api().patch(f'/appointments/{obj.pk}/cancel', body, format='json')
                 self.assertEqual(response.status_code, 400)
-                self.assertIn('reason', response.data)
+                self.assertIn('reason', response.json()['error']['details'])
                 obj.refresh_from_db()
                 self.assertEqual(obj.status, 'confirmed')
                 self.assertEqual(obj.cancellation_reason, '')
@@ -74,7 +74,7 @@ class RemediationTests(TestCase):
         self.client.force_login(self.patient_user)
         for reason in ['', '  ', 'x'*501]:
             response = self.client.post(f'/appointments/{obj.pk}/', {'action':'cancelled','reason':reason})
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 400)
             self.assertTrue(response.context['cancellation_form'].errors)
             obj.refresh_from_db()
             self.assertEqual(obj.status, 'confirmed')
@@ -159,8 +159,8 @@ class RemediationTests(TestCase):
                 response = self.api(user).get(f'{prefix}/patients/{self.patient.pk}/appointments')
                 self.assertEqual([x['id'] for x in response.data], [early.pk,late.pk])
             for user in [self.other_user,self.doctor_user]:
-                self.assertEqual(self.api(user).get(f'{prefix}/patients/{self.patient.pk}/appointments').status_code, 403)
-        self.assertEqual(APIClient().get(f'/patients/{self.patient.pk}/appointments').status_code, 403)
+                self.assertEqual(self.api(user).get(f'{prefix}/patients/{self.patient.pk}/appointments').status_code, 403 if user else 401)
+        self.assertEqual(APIClient().get(f'/patients/{self.patient.pk}/appointments').status_code, 401)
 
     def test_one_hour_exact_boundary_and_equivalent_utc_reschedule(self):
         obj = self.create()
