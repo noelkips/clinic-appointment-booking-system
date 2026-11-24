@@ -2,6 +2,34 @@ from django.db import migrations, models
 import re
 
 from django.db.models import Case, F, Q, Value, When
+from django.db.models.functions import ExtractMicrosecond
+from django.db.models.lookups import Exact
+
+
+class AddFieldIfMissing(migrations.AddField):
+    """Make the DDL safe to retry after MySQL's implicit DDL commits."""
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        model = to_state.apps.get_model(app_label, self.model_name)
+        with schema_editor.connection.cursor() as cursor:
+            columns = schema_editor.connection.introspection.get_table_description(
+                cursor, model._meta.db_table
+            )
+        if not any(column.name == self.name for column in columns):
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
+
+
+class AddConstraintIfMissing(migrations.AddConstraint):
+    """Skip a constraint already committed by a partially failed migration."""
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        model = to_state.apps.get_model(app_label, self.model_name)
+        with schema_editor.connection.cursor() as cursor:
+            constraints = schema_editor.connection.introspection.get_constraints(
+                cursor, model._meta.db_table
+            )
+        if self.constraint.name not in constraints:
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
 
 
 def verify_mysql_support(apps, schema_editor):
@@ -77,7 +105,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.AddField(
+        AddFieldIfMissing(
             model_name='appointment',
             name='active_slot_starts_at',
             field=models.GeneratedField(
@@ -90,26 +118,26 @@ class Migration(migrations.Migration):
                 output_field=models.DateTimeField(null=True),
             ),
         ),
-        migrations.AddConstraint(
+        AddConstraintIfMissing(
             model_name='appointment',
             constraint=models.CheckConstraint(
                 condition=Q(status='cancelled')
                 | (
                     Q(starts_at__minute__in=(0, 30))
                     & Q(starts_at__second=0)
-                    & Q(starts_at__microsecond=0)
+                    & Q(Exact(ExtractMicrosecond(F('starts_at')), 0))
                 ),
                 name='confirmed_appointment_half_hour_grid',
             ),
         ),
-        migrations.AddConstraint(
+        AddConstraintIfMissing(
             model_name='appointment',
             constraint=models.UniqueConstraint(
                 fields=('doctor', 'active_slot_starts_at'),
                 name='unique_confirmed_doctor_slot',
             ),
         ),
-        migrations.AddConstraint(
+        AddConstraintIfMissing(
             model_name='appointment',
             constraint=models.UniqueConstraint(
                 fields=('patient', 'active_slot_starts_at'),
