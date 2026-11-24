@@ -113,6 +113,23 @@ The migrations fail on incompatible preexisting confirmed appointments rather th
 silently changing them. `collectstatic` uses WhiteNoise and excludes the Tailwind
 source directory.
 
+### Optional fictional assessment seed
+
+For a fresh database that should contain the fictional assessment dataset, use the
+local-only `scripts/seed_truehost_demo.sh` file. It is ignored by Git because it
+contains the three README demonstration passwords. Upload it privately to the app
+root (outside `public_html`) using cPanel File Manager, then run
+`bash scripts/seed_truehost_demo.sh` from the activated virtualenv and app root.
+The script prints a read-only database inspection first and only proceeds after
+you type the exact database name shown. It uses the existing ownership-checked,
+transactional seeder, adds 27 fictional accounts and 100 sample appointments, and
+then runs its read-only verifier. Other seeded accounts have unusable passwords;
+the three primary accounts use the passwords listed in README. The command refuses
+unmarked username collisions or mismatched existing credentials and never deletes
+records. Remove the uploaded script immediately after it completes; do not commit
+or leave it on the server. Use only for a fictional demo database, never for real
+patient records.
+
 The current hosted CI database job runs PostgreSQL. Before pointing the live app at
 the new MySQL database, apply these migrations to a disposable MySQL 8.0.16+ database
 with the same cPanel permissions and confirm they complete successfully.

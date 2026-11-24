@@ -26,6 +26,7 @@ staticfiles/
 .local/
 .write-check
 docs/LOCAL_TEST_ACCOUNTS.md
+scripts/seed_truehost_demo.sh
 
 # SQLite journals and other local SQLite filenames
 *.sqlite
