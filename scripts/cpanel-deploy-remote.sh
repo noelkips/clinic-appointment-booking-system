@@ -11,9 +11,9 @@ source "$CPANEL_VENV/bin/activate"
 python -m pip install -r requirements.txt
 python -m pip check
 test -f .env
-dotenv run -- python manage.py check --deploy --fail-level WARNING
-dotenv run -- python manage.py migrate --noinput
-dotenv run -- python manage.py migrate --check
-dotenv run -- python manage.py collectstatic --noinput --ignore=src
+python manage.py check --deploy --fail-level WARNING
+python manage.py migrate --noinput
+python manage.py migrate --check
+python manage.py collectstatic --noinput --ignore=src
 mkdir -p tmp
 touch tmp/restart.txt
