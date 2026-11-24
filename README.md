@@ -4,7 +4,7 @@
 
 A Django/DRF appointment system for a small clinic with five demonstration doctors, weekly working hours and 30-minute slots. Patients view availability, book, cancel with a reason and reschedule. Public doctor pages and responsive patient, doctor and administrator dashboards support the assessment APIs.
 
-Stack: Python 3.13, Django 5.2, Django REST Framework, PostgreSQL, Django Templates, Tailwind standalone CLI and vanilla JavaScript. No Node build is required.
+Stack: Python 3.13, Django 5.2, Django REST Framework, Django Templates, Tailwind standalone CLI and vanilla JavaScript. Production supports MySQL 8.0.16+, MariaDB 10.5+, or PostgreSQL 14+; the Truehost cPanel deployment targets MySQL/MariaDB. No Node build is required.
 
 Repository: [noelkips/clinic-appointment-booking-system](https://github.com/noelkips/clinic-appointment-booking-system), confirmed as Git origin; reviewer access/current remote contents remain unverified. The owner reports successful GitHub CI and deployment; live public checks and remaining demonstration-account verification are below.
 
@@ -28,7 +28,7 @@ See [controlled seeding and verification](docs/LIVE_DEMO_TESTING_GUIDE.md), [ver
 
 A Django monolith shares authentication, ORM and booking services between HTML forms and REST views. It keeps operations simple for five doctors while supporting growth through indexing, aggregation and pagination before distributed infrastructure.
 
-PostgreSQL provides transactions, row locks and GiST exclusion constraints. Services lock Doctor then Patient, validate, save and record an event atomically; appointment changes also lock the appointment. Conditional unique constraints and half-open 30-minute interval exclusions prevent doctor and patient overlap, including direct SQL writes. Adjacent visits are allowed. Database guards do not enforce every business rule for direct maintenance edits.
+Services lock Doctor then Patient, validate, save and record an event atomically; appointment changes also lock the appointment. MySQL uses a stored generated active-slot column, an enforced half-hour-grid check and unique doctor/patient slot constraints. PostgreSQL uses conditional uniqueness plus half-open GiST interval exclusions. Both prevent confirmed booking conflicts, including direct SQL writes; adjacent visits are allowed. Database guards do not enforce every business rule for direct maintenance edits.
 
 Slots are derived from weekly periods rather than pre-generated rows. This supports breaks without extra slot storage; leave, holidays, overnight shifts and variable durations need future policy. Dashboards currently use repeated counts and unpaginated lists. Event history does not retain old/new timestamps. These are scalability/history trade-offs, not missing mandatory endpoints.
 
@@ -52,7 +52,7 @@ flowchart LR
     Client[Session API client] --> API[DRF views and serializer]
     Views --> Services[Shared booking and authorization services]
     API --> Services
-    Services --> DB[(PostgreSQL: locks and constraints)]
+    Services --> DB[(MySQL or PostgreSQL: locks and constraints)]
 ```
 
 Django User `is_staff` means application administrator; otherwise Doctor/Patient profiles determine role. Patients access their own records, doctors assigned visits and personal schedules, staff clinic management. Registration creates patients only. Login redirects to `/dashboard/`, `/doctor-dashboard/` or `/platform/`. Session-authenticated mutations and POST logout require CSRF. The maintenance UI is `/django-admin/`, with separate Django model permissions. Password recovery is informational, not an email reset feature.
@@ -77,11 +77,11 @@ Cancelled records occupy no slot. Cancellation retains the original consultation
 
 ## 5. Local Setup
 
-The Git root contains the inner application folder. Run these **fresh-environment** steps from a new checkout; preserve an existing `.env` and populated database:
+Run these **fresh-environment** steps from a new checkout; preserve an existing `.env` and populated database:
 
 ```powershell
 git clone https://github.com/noelkips/clinic-appointment-booking-system.git
-Set-Location clinic-appointment-booking-system\clinic-appointment-booking-system
+Set-Location clinic-appointment-booking-system
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
@@ -89,7 +89,7 @@ Copy-Item .env.example .env
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Create a local PostgreSQL role/database, enable `btree_gist`, then privately configure `DJANGO_SECRET_KEY`, `DATABASE_URL`, `DJANGO_DEBUG=True` and local `DJANGO_ALLOWED_HOSTS`. Percent-encode reserved password characters in connection URLs. Supported proxy/origin controls are in `.env.example`; leave proxy trust off locally. Never commit secrets.
+Create a local PostgreSQL role/database, enable `btree_gist`, then privately configure `DJANGO_SECRET_KEY`, `DATABASE_URL`, `DJANGO_DEBUG=True` and local `DJANGO_ALLOWED_HOSTS`. The Truehost guide configures a MySQL URL instead. Percent-encode reserved password characters in connection URLs. Supported proxy/origin controls are in `.env.example`; leave proxy trust off locally. Never commit secrets.
 
 ```powershell
 python manage.py check
@@ -126,7 +126,7 @@ python manage.py test config.test_production --settings=config.test_settings --k
 
 ## 7. Deployment and CI/CD
 
-For a Truehost/cPanel subdomain deployment using Passenger, see the [cPanel deployment guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md). The project includes a `passenger_wsgi.py` entry point. Confirm PostgreSQL and `btree_gist` extension support with the selected Truehost plan before deployment; MySQL cannot replace this application's production database.
+For a Truehost/cPanel subdomain deployment using Passenger and MySQL, see the [cPanel deployment guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md). The project includes a `passenger_wsgi.py` entry point. Confirm MySQL 8.0.16+ and InnoDB support with the selected Truehost plan before deployment.
 
 [CI workflow](.github/workflows/ci.yml) runs on PRs targeting `main` and pushes to `main`, using Ubuntu, pinned Python, PostgreSQL 18.6, extension setup, migration checks, the full suite, production checks and static collection. Its token has contents-read permission only. Test fixture seeding is isolated; no standalone demo seed step runs. The optional [cPanel deployment workflow](.github/workflows/cpanel-deploy.yml) deploys the tested `main` revision over SSH after CI passes, once its required repository secrets have been configured.
 
@@ -158,10 +158,10 @@ THE UI design, and also the seeding of demo data including several documentation
 ├── .github/workflows/ci.yml
 ├── .gitattributes
 └── clinic-appointment-booking-system/
-    ├── manage.py, requirements.txt, render.yaml, .env.example
+    ├── manage.py, requirements.txt, render.yaml, .env.example, passenger_wsgi.py
     ├── config/       # settings, URLs, WSGI, health and production tests
     ├── clinic/       # models, services, API/serializer, forms, views, tests
-    │   ├── migrations/  # 0001–0004; interval guards retained
+    │   ├── migrations/  # 0001–0005; backend-specific interval guards
     │   └── management/commands/seed_demo.py
     ├── scripts/render-build.sh
     ├── templates/, static/
@@ -170,7 +170,7 @@ THE UI design, and also the seeding of demo data including several documentation
 
 - Original four-section assessment is the source of truth; the expected PDF is absent from this checkout. Restore your original review copy before submission.
 - [Deployment guide](docs/RENDER_DEPLOYMENT_GUIDE.md) — exact setup, validation, rollback and pending external evidence.
-- [Truehost cPanel guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md) — subdomain, Passenger, PostgreSQL requirements, environment and updates.
+- [Truehost cPanel guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md) — subdomain, Passenger, MySQL requirements, environment and updates.
 - [API reference](docs/API_REFERENCE.md) and [local development guide](docs/LOCAL_DEVELOPMENT_GUIDE.md).
 - [Final audit](docs/FINAL_ASSESSMENT_COMPLIANCE_AUDIT.md) — historical pre-CI matrix with current preparation note.
 - [Functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md), [earlier audit](docs/ASSESSMENT_COMPLIANCE_AUDIT.md), [implementation history](docs/IMPLEMENTATION_REPORT.md).

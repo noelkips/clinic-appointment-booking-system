@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, F
+from django.db.models import Q, F, Case, When, Value
 from django.utils import timezone
 
 class Doctor(models.Model):
@@ -53,9 +53,29 @@ class Appointment(models.Model):
     cancellation_reason = models.CharField(max_length=500, blank=True, default='')
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.CONFIRMED)
     created_at = models.DateTimeField(auto_now_add=True)
+    active_slot_starts_at = models.GeneratedField(
+        expression=Case(
+            When(status='confirmed', then=F('starts_at')),
+            default=Value(None),
+            output_field=models.DateTimeField(),
+        ),
+        output_field=models.DateTimeField(null=True),
+        db_persist=True,
+    )
     class Meta:
         ordering = ['starts_at']
-        constraints = [models.UniqueConstraint(fields=['doctor','starts_at'], condition=models.Q(status='confirmed'), name='unique_confirmed_doctor_slot'), models.UniqueConstraint(fields=['patient','starts_at'], condition=models.Q(status='confirmed'), name='unique_confirmed_patient_slot')]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(status='cancelled') | (
+                    Q(starts_at__minute__in=(0, 30))
+                    & Q(starts_at__second=0)
+                    & Q(starts_at__microsecond=0)
+                ),
+                name='confirmed_appointment_half_hour_grid',
+            ),
+            models.UniqueConstraint(fields=['doctor', 'active_slot_starts_at'], name='unique_confirmed_doctor_slot'),
+            models.UniqueConstraint(fields=['patient', 'active_slot_starts_at'], name='unique_confirmed_patient_slot'),
+        ]
     def clean(self):
         from .services import validate_slot
         if self.starts_at and self.doctor_id:

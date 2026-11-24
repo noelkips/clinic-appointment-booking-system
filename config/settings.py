@@ -35,8 +35,12 @@ TEMPLATES = [{
 }]
 WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {'default': dj_database_url.config(default='postgresql://clinic_local@127.0.0.1:5432/clinic_local', conn_max_age=60)}
-if DATABASES['default']['ENGINE'] != 'django.db.backends.postgresql' and not (DEBUG and os.getenv('DJANGO_ALLOW_SQLITE') == 'True'):
-    raise ImproperlyConfigured('PostgreSQL is required; SQLite diagnostics require explicit development opt-in.')
+SUPPORTED_PRODUCTION_ENGINES = {'django.db.backends.postgresql', 'django.db.backends.mysql'}
+if DATABASES['default']['ENGINE'] not in SUPPORTED_PRODUCTION_ENGINES and not (DEBUG and os.getenv('DJANGO_ALLOW_SQLITE') == 'True'):
+    raise ImproperlyConfigured('MySQL or PostgreSQL is required; SQLite diagnostics require explicit development opt-in.')
+if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
+    DATABASES['default'].setdefault('OPTIONS', {})
+    DATABASES['default']['OPTIONS'].setdefault('init_command', "SET sql_mode='STRICT_TRANS_TABLES'")
 if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
     # Acquire the SQLite writer reservation before reading inside atomic services.
     DATABASES['default']['OPTIONS'] = {'transaction_mode': 'IMMEDIATE', 'timeout': 20}

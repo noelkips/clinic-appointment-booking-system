@@ -34,8 +34,8 @@ class Command(BaseCommand):
         parser.add_argument('--rotate-passwords', action='store_true', help='Explicitly change ONLY the three owned reviewer passwords.')
 
     def handle(self, *args, **options):
-        if connection.vendor != 'postgresql':
-            raise CommandError('Assessment seeding requires PostgreSQL.')
+        if connection.vendor not in {'postgresql', 'mysql'}:
+            raise CommandError('Assessment seeding requires MySQL or PostgreSQL.')
         if options['inspect']:
             self.stdout.write(str({m.__name__: m.objects.count() for m in (User, Doctor, Patient, DoctorAvailability, Appointment, AppointmentEvent)}))
             self.stdout.write('Intended usernames already present: ' + str(User.objects.filter(username__in=[r[0] for r in roster()]).count()))

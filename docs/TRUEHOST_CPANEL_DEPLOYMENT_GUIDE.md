@@ -13,17 +13,22 @@ Ask Truehost to confirm all of the following for the specific account/plan:
 - A Python version compatible with the pinned packages in `requirements.txt` is
   available. The project was prepared for Python 3.13.12; don't select a different
   version without checking package compatibility.
-- PostgreSQL is available to this account, `psycopg` can connect to it, and the
-  account can install the PostgreSQL `btree_gist` extension for the database.
-- The database version supports the `btree_gist` extension and GiST exclusion
-  constraints. The appointment overlap protections depend on them.
+- MySQL 8.0.16+ or MariaDB 10.5+ is available to this account and `mysqlclient`
+  can be installed in the selected cPanel Python environment.
+- If pip builds `mysqlclient` from source, the server provides a compiler,
+  `pkg-config`, and MySQL/MariaDB client development headers/libraries.
+- The database uses the InnoDB storage engine and supports enforced `CHECK`
+  constraints and stored generated columns. The appointment overlap protections
+  depend on these features.
 - SSH/Terminal is available if you want command-line deployment or GitHub-triggered
   deployment.
 
-The app requires PostgreSQL in production. MySQL is not a supported replacement.
-The host's advertised Python support alone does not confirm PostgreSQL or extension
-support. If shared cPanel cannot meet these requirements, use a Truehost VPS or
-another PostgreSQL host and connect the app to it over a restricted TLS connection.
+The cPanel deployment uses the Django MySQL backend. Django 5.2 supports MySQL
+8.0.11+ and MariaDB 10.5+; this app requires MySQL 8.0.16+ because earlier MySQL
+versions parse some `CHECK` syntax without enforcing it. Confirm the actual server
+version and InnoDB support with Truehost. If the shared plan cannot meet these
+requirements, use a compatible MySQL/MariaDB plan or VPS. PostgreSQL remains
+supported for the existing Render setup and CI.
 
 ## 1. Create the subdomain and Python application
 
@@ -55,13 +60,14 @@ tracked repository version. cPanel's Python Selector supplies the virtual enviro
 to Passenger; the repository file adds the app root to Python's import path and loads
 the Django WSGI application.
 
-## 3. Create PostgreSQL and configure secrets
+## 3. Create MySQL and configure secrets
 
-Create a new production database and a dedicated database user with only the required
-database privileges. Do not reuse the expired Render database URL. Check whether a
-Render backup can still be recovered before concluding its data is lost. A fresh
-database will contain no users, doctors, schedules, or appointments until you create
-them or restore an authorized backup.
+In cPanel **MySQL Databases**, create a database and dedicated database user, then
+grant that user all privileges on that database. cPanel usually prefixes the names
+with the account username; use the full names displayed by cPanel. Require InnoDB
+tables. Do not reuse the expired Render PostgreSQL URL. A PostgreSQL backup cannot
+be restored directly into MySQL; transferring records would require a separate data
+migration. A fresh database contains no users, doctors, schedules, or appointments.
 
 The project supports a private `.env` file in its application root (`config/settings.py`
 loads it). Create this file on the server, outside `public_html`, and set its
@@ -76,7 +82,7 @@ Recommended `.env` values:
 | `DJANGO_DEBUG` | `False` |
 | `DJANGO_ALLOWED_HOSTS` | The exact subdomain, e.g. `appointments.example.com` (no scheme) |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | `https://appointments.example.com` |
-| `DATABASE_URL` | PostgreSQL URL for the new database; percent-encode special characters in the password |
+| `DATABASE_URL` | `mysql://FULL_DB_USER:URL_ENCODED_PASSWORD@localhost:3306/FULL_DB_NAME` (use the host/port Truehost supplies) |
 | `DJANGO_TRUST_PROXY` | Leave `False` unless Truehost confirms its proxy sanitizes and sets `X-Forwarded-Proto` correctly |
 | `DEMO_SEED_ENABLED` | `False` |
 | `DJANGO_ALLOW_SQLITE` | `False` |
@@ -99,11 +105,28 @@ python manage.py collectstatic --noinput --ignore=src
 python manage.py createsuperuser
 ```
 
-The migration installs `btree_gist` and creates PostgreSQL exclusion constraints.
-If extension creation is denied, stop and ask the host to enable it; do not skip or
-fake migration `0004`. It also checks for existing overlapping bookings and will
-fail rather than silently altering them. `collectstatic` uses WhiteNoise and excludes
-the Tailwind source directory by design.
+If `pip install` reports a `mysqlclient` build error, send the full error to Truehost
+and ask them to enable the MySQL client development libraries/compiler for the Python
+app, or provide a compatible wheel. Do not remove the driver dependency; Django needs
+it to connect to MySQL.
+
+Migration `0004` retains PostgreSQL/SQLite guards; `0005` adds a stored generated
+active-slot column, an enforced check that confirmed starts are on the 30-minute
+grid, and unique indexes for each doctor and patient slot. Together, these prevent
+overlap for the app's fixed 30-minute slots and make cancelled appointments release
+their slot. MySQL 8.0.16+ or MariaDB 10.5+ is required so the check is enforced.
+The migrations fail on incompatible preexisting confirmed appointments rather than
+silently changing them. `collectstatic` uses WhiteNoise and excludes the Tailwind
+source directory.
+
+The current hosted CI database job runs PostgreSQL. Before pointing the live app at
+the new MySQL database, apply these migrations to a disposable MySQL 8.0.16+ database
+with the same cPanel permissions and confirm they complete successfully.
+
+This database configuration depends on the application invariant that confirmed
+appointments start on a half-hour boundary and last exactly 30 minutes. The
+database enforces the boundary and uniqueness; business validation enforces doctor
+availability, advance notice and the rest of booking policy.
 
 Restart the application from **Setup Python App**. If a restart button is unavailable,
 Passenger commonly watches `tmp/restart.txt` under the application root; create/update

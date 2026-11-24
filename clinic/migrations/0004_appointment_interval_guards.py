@@ -42,8 +42,12 @@ def install_guards(apps, schema_editor):
                           (starts_at AT TIME ZONE 'UTC') + INTERVAL '30 minutes', '[)') WITH &&
                 ) WHERE (status = 'confirmed')
             """)
+    elif vendor == 'mysql':
+        # MySQL interval enforcement is installed in 0005 using a stored
+        # generated active slot plus enforced alignment/uniqueness constraints.
+        pass
     else:
-        raise RuntimeError('Appointment interval guards support SQLite and PostgreSQL only.')
+        raise RuntimeError('Appointment interval guards support SQLite, PostgreSQL, and MySQL only.')
 
 
 def remove_guards(apps, schema_editor):
@@ -54,6 +58,9 @@ def remove_guards(apps, schema_editor):
         for owner in ('doctor', 'patient'):
             schema_editor.execute(f'ALTER TABLE clinic_appointment DROP CONSTRAINT IF EXISTS no_overlap_{owner}_interval')
         # btree_gist may be used by other applications; leave it installed.
+    elif schema_editor.connection.vendor == 'mysql':
+        # MySQL guard columns and constraints are removed by later migrations.
+        pass
 
 
 class Migration(migrations.Migration):
