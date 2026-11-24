@@ -2,7 +2,7 @@ from django.db import migrations, models
 import re
 
 from django.db.models import Case, F, Q, Value, When
-from django.db.models.functions import ExtractMicrosecond
+from django.db.models.functions import Extract
 from django.db.models.lookups import Exact
 
 
@@ -125,7 +125,7 @@ class Migration(migrations.Migration):
                 | (
                     Q(starts_at__minute__in=(0, 30))
                     & Q(starts_at__second=0)
-                    & Q(Exact(ExtractMicrosecond(F('starts_at')), 0))
+                    & Q(Exact(Extract(F('starts_at'), 'microsecond'), 0))
                 ),
                 name='confirmed_appointment_half_hour_grid',
             ),

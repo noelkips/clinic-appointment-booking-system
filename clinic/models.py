@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, F, Case, When, Value
-from django.db.models.functions import ExtractMicrosecond
+from django.db.models.functions import Extract
 from django.db.models.lookups import Exact
 from django.utils import timezone
 
@@ -71,7 +71,7 @@ class Appointment(models.Model):
                 condition=Q(status='cancelled') | (
                     Q(starts_at__minute__in=(0, 30))
                     & Q(starts_at__second=0)
-                    & Q(Exact(ExtractMicrosecond(F('starts_at')), 0))
+                    & Q(Exact(Extract(F('starts_at'), 'microsecond'), 0))
                 ),
                 name='confirmed_appointment_half_hour_grid',
             ),
