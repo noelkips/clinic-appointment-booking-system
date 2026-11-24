@@ -1,0 +1,3770 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "__savannah_assessment_demo_v1__",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$5uGg56dRPIV22jyqHUpBtz$+onhOh/sc+iq5Sx0CcRInlM3GEiIRvUBNKzWcnVG8tY=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "demo_admin",
+      "first_name": "Assessment",
+      "last_name": "Administrator",
+      "email": "demo_admin@assessment.example.test",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_admin2",
+      "first_name": "Assessment",
+      "last_name": "Support",
+      "email": "assessment_admin2@assessment.example.test",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$S9flgcbrAgioPONqMjfBRA$IzZlDyamPoBjuaQWqueSgOcttdwD7FlZ2x7csg9CdWo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "demo_doctor",
+      "first_name": "Amara",
+      "last_name": "Njoroge",
+      "email": "demo_doctor@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_doctor2",
+      "first_name": "Daniel",
+      "last_name": "Otieno",
+      "email": "assessment_doctor2@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_doctor3",
+      "first_name": "Leila",
+      "last_name": "Hassan",
+      "email": "assessment_doctor3@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_doctor4",
+      "first_name": "Samuel",
+      "last_name": "Kiptoo",
+      "email": "assessment_doctor4@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 7,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_doctor5",
+      "first_name": "Zuri",
+      "last_name": "Kamau",
+      "email": "assessment_doctor5@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 8,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$TGGojv07J8fNlY0MFR9ldk$uw0dwfBuj+rF0AUOMqyKJh2lmu7KSwicHxU9giNOr+c=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "demo_patient",
+      "first_name": "Amina",
+      "last_name": "Wambui",
+      "email": "demo_patient@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 9,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient2",
+      "first_name": "Brian",
+      "last_name": "Odhiambo",
+      "email": "assessment_patient2@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 10,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient3",
+      "first_name": "Chloe",
+      "last_name": "Kibet",
+      "email": "assessment_patient3@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 11,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient4",
+      "first_name": "David",
+      "last_name": "Muriithi",
+      "email": "assessment_patient4@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 12,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient5",
+      "first_name": "Esther",
+      "last_name": "Achieng",
+      "email": "assessment_patient5@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 13,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient6",
+      "first_name": "Felix",
+      "last_name": "Barasa",
+      "email": "assessment_patient6@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 14,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient7",
+      "first_name": "Grace",
+      "last_name": "Moraa",
+      "email": "assessment_patient7@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 15,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient8",
+      "first_name": "Hassan",
+      "last_name": "Abdi",
+      "email": "assessment_patient8@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 16,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient9",
+      "first_name": "Ivy",
+      "last_name": "Chebet",
+      "email": "assessment_patient9@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 17,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient10",
+      "first_name": "James",
+      "last_name": "Mutua",
+      "email": "assessment_patient10@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 18,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient11",
+      "first_name": "Karen",
+      "last_name": "Wanjiku",
+      "email": "assessment_patient11@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 19,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient12",
+      "first_name": "Leon",
+      "last_name": "Kimani",
+      "email": "assessment_patient12@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 20,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient13",
+      "first_name": "Maya",
+      "last_name": "Wekesa",
+      "email": "assessment_patient13@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 21,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient14",
+      "first_name": "Noah",
+      "last_name": "Kariuki",
+      "email": "assessment_patient14@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 22,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient15",
+      "first_name": "Olivia",
+      "last_name": "Naliaka",
+      "email": "assessment_patient15@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 23,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient16",
+      "first_name": "Peter",
+      "last_name": "Omondi",
+      "email": "assessment_patient16@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 24,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient17",
+      "first_name": "Quinn",
+      "last_name": "Cherono",
+      "email": "assessment_patient17@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 25,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient18",
+      "first_name": "Ruth",
+      "last_name": "Muthoni",
+      "email": "assessment_patient18@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 26,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient19",
+      "first_name": "Simon",
+      "last_name": "Koech",
+      "email": "assessment_patient19@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 27,
+    "fields": {
+      "password": "!",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "assessment_patient20",
+      "first_name": "Talia",
+      "last_name": "Nyambura",
+      "email": "assessment_patient20@assessment.example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-24T18:53:03+03:00",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 1,
+    "fields": {
+      "user": 3,
+      "specialty": "General Medicine",
+      "is_available": true,
+      "biography": "A thoughtful approach to everyday health, preventive care, and helping you plan your next steps."
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 2,
+    "fields": {
+      "user": 4,
+      "specialty": "Pediatrics",
+      "is_available": true,
+      "biography": "Welcoming care for children and their families, with time for questions and practical guidance."
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 3,
+    "fields": {
+      "user": 5,
+      "specialty": "Dermatology",
+      "is_available": true,
+      "biography": "A calm, attentive approach to skin concerns and clear, understandable care planning."
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 4,
+    "fields": {
+      "user": 6,
+      "specialty": "Cardiology",
+      "is_available": true,
+      "biography": "Focused on heart health conversations, preventive guidance, and making appointments feel less overwhelming."
+    }
+  },
+  {
+    "model": "clinic.doctor",
+    "pk": 5,
+    "fields": {
+      "user": 7,
+      "specialty": "Orthopedics",
+      "is_available": true,
+      "biography": "Supporting movement and everyday comfort through considered consultations and individual care planning."
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 1,
+    "fields": {
+      "user": 8,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 2,
+    "fields": {
+      "user": 9,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 3,
+    "fields": {
+      "user": 10,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 4,
+    "fields": {
+      "user": 11,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 5,
+    "fields": {
+      "user": 12,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 6,
+    "fields": {
+      "user": 13,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 7,
+    "fields": {
+      "user": 14,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 8,
+    "fields": {
+      "user": 15,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 9,
+    "fields": {
+      "user": 16,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 10,
+    "fields": {
+      "user": 17,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 11,
+    "fields": {
+      "user": 18,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 12,
+    "fields": {
+      "user": 19,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 13,
+    "fields": {
+      "user": 20,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 14,
+    "fields": {
+      "user": 21,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 15,
+    "fields": {
+      "user": 22,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 16,
+    "fields": {
+      "user": 23,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 17,
+    "fields": {
+      "user": 24,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 18,
+    "fields": {
+      "user": 25,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 19,
+    "fields": {
+      "user": 26,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.patient",
+    "pk": 20,
+    "fields": {
+      "user": 27,
+      "phone": ""
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 1,
+    "fields": {
+      "doctor": 1,
+      "weekday": 0,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 2,
+    "fields": {
+      "doctor": 1,
+      "weekday": 0,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 3,
+    "fields": {
+      "doctor": 1,
+      "weekday": 1,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 4,
+    "fields": {
+      "doctor": 1,
+      "weekday": 1,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 5,
+    "fields": {
+      "doctor": 1,
+      "weekday": 2,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 6,
+    "fields": {
+      "doctor": 1,
+      "weekday": 2,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 7,
+    "fields": {
+      "doctor": 1,
+      "weekday": 3,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 8,
+    "fields": {
+      "doctor": 1,
+      "weekday": 3,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 9,
+    "fields": {
+      "doctor": 1,
+      "weekday": 4,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 10,
+    "fields": {
+      "doctor": 1,
+      "weekday": 4,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 11,
+    "fields": {
+      "doctor": 2,
+      "weekday": 0,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 12,
+    "fields": {
+      "doctor": 2,
+      "weekday": 0,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 13,
+    "fields": {
+      "doctor": 2,
+      "weekday": 1,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 14,
+    "fields": {
+      "doctor": 2,
+      "weekday": 1,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 15,
+    "fields": {
+      "doctor": 2,
+      "weekday": 2,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 16,
+    "fields": {
+      "doctor": 2,
+      "weekday": 2,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 17,
+    "fields": {
+      "doctor": 2,
+      "weekday": 3,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 18,
+    "fields": {
+      "doctor": 2,
+      "weekday": 3,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 19,
+    "fields": {
+      "doctor": 2,
+      "weekday": 4,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 20,
+    "fields": {
+      "doctor": 2,
+      "weekday": 4,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 21,
+    "fields": {
+      "doctor": 3,
+      "weekday": 0,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 22,
+    "fields": {
+      "doctor": 3,
+      "weekday": 0,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 23,
+    "fields": {
+      "doctor": 3,
+      "weekday": 1,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 24,
+    "fields": {
+      "doctor": 3,
+      "weekday": 1,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 25,
+    "fields": {
+      "doctor": 3,
+      "weekday": 2,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 26,
+    "fields": {
+      "doctor": 3,
+      "weekday": 2,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 27,
+    "fields": {
+      "doctor": 3,
+      "weekday": 3,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 28,
+    "fields": {
+      "doctor": 3,
+      "weekday": 3,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 29,
+    "fields": {
+      "doctor": 3,
+      "weekday": 4,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 30,
+    "fields": {
+      "doctor": 3,
+      "weekday": 4,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 31,
+    "fields": {
+      "doctor": 4,
+      "weekday": 0,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 32,
+    "fields": {
+      "doctor": 4,
+      "weekday": 0,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 33,
+    "fields": {
+      "doctor": 4,
+      "weekday": 1,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 34,
+    "fields": {
+      "doctor": 4,
+      "weekday": 1,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 35,
+    "fields": {
+      "doctor": 4,
+      "weekday": 2,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 36,
+    "fields": {
+      "doctor": 4,
+      "weekday": 2,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 37,
+    "fields": {
+      "doctor": 4,
+      "weekday": 3,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 38,
+    "fields": {
+      "doctor": 4,
+      "weekday": 3,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 39,
+    "fields": {
+      "doctor": 4,
+      "weekday": 4,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 40,
+    "fields": {
+      "doctor": 4,
+      "weekday": 4,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 41,
+    "fields": {
+      "doctor": 5,
+      "weekday": 0,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 42,
+    "fields": {
+      "doctor": 5,
+      "weekday": 0,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 43,
+    "fields": {
+      "doctor": 5,
+      "weekday": 1,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 44,
+    "fields": {
+      "doctor": 5,
+      "weekday": 1,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 45,
+    "fields": {
+      "doctor": 5,
+      "weekday": 2,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 46,
+    "fields": {
+      "doctor": 5,
+      "weekday": 2,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 47,
+    "fields": {
+      "doctor": 5,
+      "weekday": 3,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 48,
+    "fields": {
+      "doctor": 5,
+      "weekday": 3,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 49,
+    "fields": {
+      "doctor": 5,
+      "weekday": 4,
+      "start_time": "09:00:00",
+      "end_time": "12:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.doctoravailability",
+    "pk": 50,
+    "fields": {
+      "doctor": 5,
+      "weekday": 4,
+      "start_time": "14:00:00",
+      "end_time": "17:00:00",
+      "slot_minutes": 30
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 1,
+    "fields": {
+      "patient": 1,
+      "doctor": 1,
+      "starts_at": "2026-11-10T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 001",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 1,
+    "fields": {
+      "appointment": 1,
+      "actor": 8,
+      "action": "booked",
+      "occurred_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 2,
+    "fields": {
+      "appointment": 1,
+      "actor": 8,
+      "action": "cancelled",
+      "occurred_at": "2026-11-08T09:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 2,
+    "fields": {
+      "patient": 2,
+      "doctor": 2,
+      "starts_at": "2026-11-10T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 002",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 3,
+    "fields": {
+      "appointment": 2,
+      "actor": 9,
+      "action": "booked",
+      "occurred_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 3,
+    "fields": {
+      "patient": 3,
+      "doctor": 3,
+      "starts_at": "2026-11-10T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 003",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 4,
+    "fields": {
+      "appointment": 3,
+      "actor": 10,
+      "action": "booked",
+      "occurred_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 4,
+    "fields": {
+      "patient": 4,
+      "doctor": 4,
+      "starts_at": "2026-11-10T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 004",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 5,
+    "fields": {
+      "appointment": 4,
+      "actor": 11,
+      "action": "booked",
+      "occurred_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 5,
+    "fields": {
+      "patient": 5,
+      "doctor": 5,
+      "starts_at": "2026-11-10T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 005",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 6,
+    "fields": {
+      "appointment": 5,
+      "actor": 12,
+      "action": "booked",
+      "occurred_at": "2026-11-08T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 6,
+    "fields": {
+      "patient": 6,
+      "doctor": 1,
+      "starts_at": "2026-11-11T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 006",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 7,
+    "fields": {
+      "appointment": 6,
+      "actor": 13,
+      "action": "booked",
+      "occurred_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 7,
+    "fields": {
+      "patient": 7,
+      "doctor": 2,
+      "starts_at": "2026-11-11T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 007",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 8,
+    "fields": {
+      "appointment": 7,
+      "actor": 14,
+      "action": "booked",
+      "occurred_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 8,
+    "fields": {
+      "patient": 8,
+      "doctor": 3,
+      "starts_at": "2026-11-11T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 008",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 9,
+    "fields": {
+      "appointment": 8,
+      "actor": 15,
+      "action": "booked",
+      "occurred_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 10,
+    "fields": {
+      "appointment": 8,
+      "actor": 15,
+      "action": "cancelled",
+      "occurred_at": "2026-11-09T09:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 9,
+    "fields": {
+      "patient": 9,
+      "doctor": 4,
+      "starts_at": "2026-11-11T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 009",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 11,
+    "fields": {
+      "appointment": 9,
+      "actor": 16,
+      "action": "booked",
+      "occurred_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 10,
+    "fields": {
+      "patient": 10,
+      "doctor": 5,
+      "starts_at": "2026-11-11T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 010",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 12,
+    "fields": {
+      "appointment": 10,
+      "actor": 17,
+      "action": "booked",
+      "occurred_at": "2026-11-09T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 11,
+    "fields": {
+      "patient": 11,
+      "doctor": 1,
+      "starts_at": "2026-11-12T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 011",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 13,
+    "fields": {
+      "appointment": 11,
+      "actor": 18,
+      "action": "booked",
+      "occurred_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 12,
+    "fields": {
+      "patient": 12,
+      "doctor": 2,
+      "starts_at": "2026-11-12T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 012",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 14,
+    "fields": {
+      "appointment": 12,
+      "actor": 19,
+      "action": "booked",
+      "occurred_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 13,
+    "fields": {
+      "patient": 13,
+      "doctor": 3,
+      "starts_at": "2026-11-12T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 013",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 15,
+    "fields": {
+      "appointment": 13,
+      "actor": 20,
+      "action": "booked",
+      "occurred_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 14,
+    "fields": {
+      "patient": 14,
+      "doctor": 4,
+      "starts_at": "2026-11-12T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 014",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 16,
+    "fields": {
+      "appointment": 14,
+      "actor": 21,
+      "action": "booked",
+      "occurred_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 15,
+    "fields": {
+      "patient": 15,
+      "doctor": 5,
+      "starts_at": "2026-11-12T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 015",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 17,
+    "fields": {
+      "appointment": 15,
+      "actor": 22,
+      "action": "booked",
+      "occurred_at": "2026-11-10T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 18,
+    "fields": {
+      "appointment": 15,
+      "actor": 22,
+      "action": "cancelled",
+      "occurred_at": "2026-11-10T09:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 16,
+    "fields": {
+      "patient": 16,
+      "doctor": 1,
+      "starts_at": "2026-11-13T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 016",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 19,
+    "fields": {
+      "appointment": 16,
+      "actor": 23,
+      "action": "booked",
+      "occurred_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 17,
+    "fields": {
+      "patient": 17,
+      "doctor": 2,
+      "starts_at": "2026-11-13T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 017",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 20,
+    "fields": {
+      "appointment": 17,
+      "actor": 24,
+      "action": "booked",
+      "occurred_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 18,
+    "fields": {
+      "patient": 18,
+      "doctor": 3,
+      "starts_at": "2026-11-13T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 018",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 21,
+    "fields": {
+      "appointment": 18,
+      "actor": 25,
+      "action": "booked",
+      "occurred_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 19,
+    "fields": {
+      "patient": 19,
+      "doctor": 4,
+      "starts_at": "2026-11-13T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 019",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 22,
+    "fields": {
+      "appointment": 19,
+      "actor": 26,
+      "action": "booked",
+      "occurred_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 20,
+    "fields": {
+      "patient": 20,
+      "doctor": 5,
+      "starts_at": "2026-11-13T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 020",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 23,
+    "fields": {
+      "appointment": 20,
+      "actor": 27,
+      "action": "booked",
+      "occurred_at": "2026-11-11T09:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 21,
+    "fields": {
+      "patient": 1,
+      "doctor": 1,
+      "starts_at": "2026-11-16T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 021",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 24,
+    "fields": {
+      "appointment": 21,
+      "actor": 8,
+      "action": "booked",
+      "occurred_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 22,
+    "fields": {
+      "patient": 2,
+      "doctor": 2,
+      "starts_at": "2026-11-16T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 022",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 25,
+    "fields": {
+      "appointment": 22,
+      "actor": 9,
+      "action": "booked",
+      "occurred_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 26,
+    "fields": {
+      "appointment": 22,
+      "actor": 9,
+      "action": "cancelled",
+      "occurred_at": "2026-11-14T10:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 23,
+    "fields": {
+      "patient": 3,
+      "doctor": 3,
+      "starts_at": "2026-11-16T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 023",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 27,
+    "fields": {
+      "appointment": 23,
+      "actor": 10,
+      "action": "booked",
+      "occurred_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 24,
+    "fields": {
+      "patient": 4,
+      "doctor": 4,
+      "starts_at": "2026-11-16T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 024",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 28,
+    "fields": {
+      "appointment": 24,
+      "actor": 11,
+      "action": "booked",
+      "occurred_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 25,
+    "fields": {
+      "patient": 5,
+      "doctor": 5,
+      "starts_at": "2026-11-16T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 025",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 29,
+    "fields": {
+      "appointment": 25,
+      "actor": 12,
+      "action": "booked",
+      "occurred_at": "2026-11-14T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 26,
+    "fields": {
+      "patient": 6,
+      "doctor": 1,
+      "starts_at": "2026-11-17T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 026",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 30,
+    "fields": {
+      "appointment": 26,
+      "actor": 13,
+      "action": "booked",
+      "occurred_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 27,
+    "fields": {
+      "patient": 7,
+      "doctor": 2,
+      "starts_at": "2026-11-17T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 027",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 31,
+    "fields": {
+      "appointment": 27,
+      "actor": 14,
+      "action": "booked",
+      "occurred_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 28,
+    "fields": {
+      "patient": 8,
+      "doctor": 3,
+      "starts_at": "2026-11-17T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 028",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 32,
+    "fields": {
+      "appointment": 28,
+      "actor": 15,
+      "action": "booked",
+      "occurred_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 29,
+    "fields": {
+      "patient": 9,
+      "doctor": 4,
+      "starts_at": "2026-11-17T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 029",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 33,
+    "fields": {
+      "appointment": 29,
+      "actor": 16,
+      "action": "booked",
+      "occurred_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 34,
+    "fields": {
+      "appointment": 29,
+      "actor": 16,
+      "action": "cancelled",
+      "occurred_at": "2026-11-15T10:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 30,
+    "fields": {
+      "patient": 10,
+      "doctor": 5,
+      "starts_at": "2026-11-17T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 030",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 35,
+    "fields": {
+      "appointment": 30,
+      "actor": 17,
+      "action": "booked",
+      "occurred_at": "2026-11-15T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 31,
+    "fields": {
+      "patient": 11,
+      "doctor": 1,
+      "starts_at": "2026-11-18T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 031",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 36,
+    "fields": {
+      "appointment": 31,
+      "actor": 18,
+      "action": "booked",
+      "occurred_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 32,
+    "fields": {
+      "patient": 12,
+      "doctor": 2,
+      "starts_at": "2026-11-18T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 032",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 37,
+    "fields": {
+      "appointment": 32,
+      "actor": 19,
+      "action": "booked",
+      "occurred_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 33,
+    "fields": {
+      "patient": 13,
+      "doctor": 3,
+      "starts_at": "2026-11-18T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 033",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 38,
+    "fields": {
+      "appointment": 33,
+      "actor": 20,
+      "action": "booked",
+      "occurred_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 34,
+    "fields": {
+      "patient": 14,
+      "doctor": 4,
+      "starts_at": "2026-11-18T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 034",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 39,
+    "fields": {
+      "appointment": 34,
+      "actor": 21,
+      "action": "booked",
+      "occurred_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 35,
+    "fields": {
+      "patient": 15,
+      "doctor": 5,
+      "starts_at": "2026-11-18T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 035",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 40,
+    "fields": {
+      "appointment": 35,
+      "actor": 22,
+      "action": "booked",
+      "occurred_at": "2026-11-16T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 36,
+    "fields": {
+      "patient": 16,
+      "doctor": 1,
+      "starts_at": "2026-11-19T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 036",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 41,
+    "fields": {
+      "appointment": 36,
+      "actor": 23,
+      "action": "booked",
+      "occurred_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 42,
+    "fields": {
+      "appointment": 36,
+      "actor": 23,
+      "action": "cancelled",
+      "occurred_at": "2026-11-17T10:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 37,
+    "fields": {
+      "patient": 17,
+      "doctor": 2,
+      "starts_at": "2026-11-19T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 037",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 43,
+    "fields": {
+      "appointment": 37,
+      "actor": 24,
+      "action": "booked",
+      "occurred_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 38,
+    "fields": {
+      "patient": 18,
+      "doctor": 3,
+      "starts_at": "2026-11-19T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 038",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 44,
+    "fields": {
+      "appointment": 38,
+      "actor": 25,
+      "action": "booked",
+      "occurred_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 39,
+    "fields": {
+      "patient": 19,
+      "doctor": 4,
+      "starts_at": "2026-11-19T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 039",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 45,
+    "fields": {
+      "appointment": 39,
+      "actor": 26,
+      "action": "booked",
+      "occurred_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 40,
+    "fields": {
+      "patient": 20,
+      "doctor": 5,
+      "starts_at": "2026-11-19T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 040",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 46,
+    "fields": {
+      "appointment": 40,
+      "actor": 27,
+      "action": "booked",
+      "occurred_at": "2026-11-17T10:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 41,
+    "fields": {
+      "patient": 1,
+      "doctor": 1,
+      "starts_at": "2026-11-20T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 041",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 47,
+    "fields": {
+      "appointment": 41,
+      "actor": 8,
+      "action": "booked",
+      "occurred_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 42,
+    "fields": {
+      "patient": 2,
+      "doctor": 2,
+      "starts_at": "2026-11-20T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 042",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 48,
+    "fields": {
+      "appointment": 42,
+      "actor": 9,
+      "action": "booked",
+      "occurred_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 43,
+    "fields": {
+      "patient": 3,
+      "doctor": 3,
+      "starts_at": "2026-11-20T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 043",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 49,
+    "fields": {
+      "appointment": 43,
+      "actor": 10,
+      "action": "booked",
+      "occurred_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 50,
+    "fields": {
+      "appointment": 43,
+      "actor": 10,
+      "action": "cancelled",
+      "occurred_at": "2026-11-18T11:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 44,
+    "fields": {
+      "patient": 4,
+      "doctor": 4,
+      "starts_at": "2026-11-20T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 044",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 51,
+    "fields": {
+      "appointment": 44,
+      "actor": 11,
+      "action": "booked",
+      "occurred_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 45,
+    "fields": {
+      "patient": 5,
+      "doctor": 5,
+      "starts_at": "2026-11-20T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 045",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 52,
+    "fields": {
+      "appointment": 45,
+      "actor": 12,
+      "action": "booked",
+      "occurred_at": "2026-11-18T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 46,
+    "fields": {
+      "patient": 6,
+      "doctor": 1,
+      "starts_at": "2026-11-23T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 046",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 53,
+    "fields": {
+      "appointment": 46,
+      "actor": 13,
+      "action": "booked",
+      "occurred_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 47,
+    "fields": {
+      "patient": 7,
+      "doctor": 2,
+      "starts_at": "2026-11-23T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 047",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 54,
+    "fields": {
+      "appointment": 47,
+      "actor": 14,
+      "action": "booked",
+      "occurred_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 48,
+    "fields": {
+      "patient": 8,
+      "doctor": 3,
+      "starts_at": "2026-11-23T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 048",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 55,
+    "fields": {
+      "appointment": 48,
+      "actor": 15,
+      "action": "booked",
+      "occurred_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 49,
+    "fields": {
+      "patient": 9,
+      "doctor": 4,
+      "starts_at": "2026-11-23T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 049",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 56,
+    "fields": {
+      "appointment": 49,
+      "actor": 16,
+      "action": "booked",
+      "occurred_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 50,
+    "fields": {
+      "patient": 10,
+      "doctor": 5,
+      "starts_at": "2026-11-23T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 050",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 57,
+    "fields": {
+      "appointment": 50,
+      "actor": 17,
+      "action": "booked",
+      "occurred_at": "2026-11-21T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 58,
+    "fields": {
+      "appointment": 50,
+      "actor": 17,
+      "action": "cancelled",
+      "occurred_at": "2026-11-21T11:10:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 51,
+    "fields": {
+      "patient": 11,
+      "doctor": 1,
+      "starts_at": "2026-11-26T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 051",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 59,
+    "fields": {
+      "appointment": 51,
+      "actor": 18,
+      "action": "booked",
+      "occurred_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 52,
+    "fields": {
+      "patient": 12,
+      "doctor": 2,
+      "starts_at": "2026-11-26T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 052",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 60,
+    "fields": {
+      "appointment": 52,
+      "actor": 19,
+      "action": "booked",
+      "occurred_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 53,
+    "fields": {
+      "patient": 13,
+      "doctor": 3,
+      "starts_at": "2026-11-26T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 053",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 61,
+    "fields": {
+      "appointment": 53,
+      "actor": 20,
+      "action": "booked",
+      "occurred_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 54,
+    "fields": {
+      "patient": 14,
+      "doctor": 4,
+      "starts_at": "2026-11-26T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 054",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 62,
+    "fields": {
+      "appointment": 54,
+      "actor": 21,
+      "action": "booked",
+      "occurred_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 55,
+    "fields": {
+      "patient": 15,
+      "doctor": 5,
+      "starts_at": "2026-11-26T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 055",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 63,
+    "fields": {
+      "appointment": 55,
+      "actor": 22,
+      "action": "booked",
+      "occurred_at": "2026-11-24T11:00:00+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 56,
+    "fields": {
+      "patient": 16,
+      "doctor": 1,
+      "starts_at": "2026-11-27T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 056",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 64,
+    "fields": {
+      "appointment": 56,
+      "actor": 23,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 57,
+    "fields": {
+      "patient": 17,
+      "doctor": 2,
+      "starts_at": "2026-11-27T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 057",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 65,
+    "fields": {
+      "appointment": 57,
+      "actor": 24,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 66,
+    "fields": {
+      "appointment": 57,
+      "actor": 24,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 58,
+    "fields": {
+      "patient": 18,
+      "doctor": 3,
+      "starts_at": "2026-11-27T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 058",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 67,
+    "fields": {
+      "appointment": 58,
+      "actor": 25,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 59,
+    "fields": {
+      "patient": 19,
+      "doctor": 4,
+      "starts_at": "2026-11-27T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 059",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 68,
+    "fields": {
+      "appointment": 59,
+      "actor": 26,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 60,
+    "fields": {
+      "patient": 20,
+      "doctor": 5,
+      "starts_at": "2026-11-27T11:00:00+03:00",
+      "reason": "Assessment demo v1 visit 060",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 69,
+    "fields": {
+      "appointment": 60,
+      "actor": 27,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 61,
+    "fields": {
+      "patient": 1,
+      "doctor": 1,
+      "starts_at": "2026-11-30T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 061",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 70,
+    "fields": {
+      "appointment": 61,
+      "actor": 8,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 62,
+    "fields": {
+      "patient": 2,
+      "doctor": 2,
+      "starts_at": "2026-11-30T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 062",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 71,
+    "fields": {
+      "appointment": 62,
+      "actor": 9,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 63,
+    "fields": {
+      "patient": 3,
+      "doctor": 3,
+      "starts_at": "2026-11-30T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 063",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 72,
+    "fields": {
+      "appointment": 63,
+      "actor": 10,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 64,
+    "fields": {
+      "patient": 4,
+      "doctor": 4,
+      "starts_at": "2026-11-30T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 064",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 73,
+    "fields": {
+      "appointment": 64,
+      "actor": 11,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 74,
+    "fields": {
+      "appointment": 64,
+      "actor": 11,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 65,
+    "fields": {
+      "patient": 5,
+      "doctor": 5,
+      "starts_at": "2026-11-30T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 065",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 75,
+    "fields": {
+      "appointment": 65,
+      "actor": 12,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 66,
+    "fields": {
+      "patient": 6,
+      "doctor": 1,
+      "starts_at": "2026-12-01T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 066",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 76,
+    "fields": {
+      "appointment": 66,
+      "actor": 13,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 67,
+    "fields": {
+      "patient": 7,
+      "doctor": 2,
+      "starts_at": "2026-12-01T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 067",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 77,
+    "fields": {
+      "appointment": 67,
+      "actor": 14,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 68,
+    "fields": {
+      "patient": 8,
+      "doctor": 3,
+      "starts_at": "2026-12-01T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 068",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 78,
+    "fields": {
+      "appointment": 68,
+      "actor": 15,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 69,
+    "fields": {
+      "patient": 9,
+      "doctor": 4,
+      "starts_at": "2026-12-01T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 069",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 79,
+    "fields": {
+      "appointment": 69,
+      "actor": 16,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 70,
+    "fields": {
+      "patient": 10,
+      "doctor": 5,
+      "starts_at": "2026-12-01T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 070",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 80,
+    "fields": {
+      "appointment": 70,
+      "actor": 17,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 71,
+    "fields": {
+      "patient": 11,
+      "doctor": 1,
+      "starts_at": "2026-12-02T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 071",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 81,
+    "fields": {
+      "appointment": 71,
+      "actor": 18,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 82,
+    "fields": {
+      "appointment": 71,
+      "actor": 18,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 72,
+    "fields": {
+      "patient": 12,
+      "doctor": 2,
+      "starts_at": "2026-12-02T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 072",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 83,
+    "fields": {
+      "appointment": 72,
+      "actor": 19,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 73,
+    "fields": {
+      "patient": 13,
+      "doctor": 3,
+      "starts_at": "2026-12-02T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 073",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 84,
+    "fields": {
+      "appointment": 73,
+      "actor": 20,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 74,
+    "fields": {
+      "patient": 14,
+      "doctor": 4,
+      "starts_at": "2026-12-02T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 074",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 85,
+    "fields": {
+      "appointment": 74,
+      "actor": 21,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 75,
+    "fields": {
+      "patient": 15,
+      "doctor": 5,
+      "starts_at": "2026-12-02T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 075",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 86,
+    "fields": {
+      "appointment": 75,
+      "actor": 22,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 76,
+    "fields": {
+      "patient": 16,
+      "doctor": 1,
+      "starts_at": "2026-12-03T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 076",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 87,
+    "fields": {
+      "appointment": 76,
+      "actor": 23,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 77,
+    "fields": {
+      "patient": 17,
+      "doctor": 2,
+      "starts_at": "2026-12-03T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 077",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 88,
+    "fields": {
+      "appointment": 77,
+      "actor": 24,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 78,
+    "fields": {
+      "patient": 18,
+      "doctor": 3,
+      "starts_at": "2026-12-03T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 078",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 89,
+    "fields": {
+      "appointment": 78,
+      "actor": 25,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 90,
+    "fields": {
+      "appointment": 78,
+      "actor": 25,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 79,
+    "fields": {
+      "patient": 19,
+      "doctor": 4,
+      "starts_at": "2026-12-03T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 079",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 91,
+    "fields": {
+      "appointment": 79,
+      "actor": 26,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 80,
+    "fields": {
+      "patient": 20,
+      "doctor": 5,
+      "starts_at": "2026-12-03T09:00:00+03:00",
+      "reason": "Assessment demo v1 visit 080",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 92,
+    "fields": {
+      "appointment": 80,
+      "actor": 27,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 81,
+    "fields": {
+      "patient": 1,
+      "doctor": 1,
+      "starts_at": "2026-12-04T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 081",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 93,
+    "fields": {
+      "appointment": 81,
+      "actor": 8,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 82,
+    "fields": {
+      "patient": 2,
+      "doctor": 2,
+      "starts_at": "2026-12-04T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 082",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 94,
+    "fields": {
+      "appointment": 82,
+      "actor": 9,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 83,
+    "fields": {
+      "patient": 3,
+      "doctor": 3,
+      "starts_at": "2026-12-04T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 083",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 95,
+    "fields": {
+      "appointment": 83,
+      "actor": 10,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 84,
+    "fields": {
+      "patient": 4,
+      "doctor": 4,
+      "starts_at": "2026-12-04T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 084",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 96,
+    "fields": {
+      "appointment": 84,
+      "actor": 11,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 85,
+    "fields": {
+      "patient": 5,
+      "doctor": 5,
+      "starts_at": "2026-12-04T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 085",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 97,
+    "fields": {
+      "appointment": 85,
+      "actor": 12,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 98,
+    "fields": {
+      "appointment": 85,
+      "actor": 12,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 86,
+    "fields": {
+      "patient": 6,
+      "doctor": 1,
+      "starts_at": "2026-12-07T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 086",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 99,
+    "fields": {
+      "appointment": 86,
+      "actor": 13,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 87,
+    "fields": {
+      "patient": 7,
+      "doctor": 2,
+      "starts_at": "2026-12-07T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 087",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 100,
+    "fields": {
+      "appointment": 87,
+      "actor": 14,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 88,
+    "fields": {
+      "patient": 8,
+      "doctor": 3,
+      "starts_at": "2026-12-07T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 088",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 101,
+    "fields": {
+      "appointment": 88,
+      "actor": 15,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 89,
+    "fields": {
+      "patient": 9,
+      "doctor": 4,
+      "starts_at": "2026-12-07T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 089",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 102,
+    "fields": {
+      "appointment": 89,
+      "actor": 16,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 90,
+    "fields": {
+      "patient": 10,
+      "doctor": 5,
+      "starts_at": "2026-12-07T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 090",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 103,
+    "fields": {
+      "appointment": 90,
+      "actor": 17,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 91,
+    "fields": {
+      "patient": 11,
+      "doctor": 1,
+      "starts_at": "2026-12-08T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 091",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 104,
+    "fields": {
+      "appointment": 91,
+      "actor": 18,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 92,
+    "fields": {
+      "patient": 12,
+      "doctor": 2,
+      "starts_at": "2026-12-08T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 092",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 105,
+    "fields": {
+      "appointment": 92,
+      "actor": 19,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 106,
+    "fields": {
+      "appointment": 92,
+      "actor": 19,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 93,
+    "fields": {
+      "patient": 13,
+      "doctor": 3,
+      "starts_at": "2026-12-08T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 093",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 107,
+    "fields": {
+      "appointment": 93,
+      "actor": 20,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 94,
+    "fields": {
+      "patient": 14,
+      "doctor": 4,
+      "starts_at": "2026-12-08T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 094",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 108,
+    "fields": {
+      "appointment": 94,
+      "actor": 21,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 95,
+    "fields": {
+      "patient": 15,
+      "doctor": 5,
+      "starts_at": "2026-12-08T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 095",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 109,
+    "fields": {
+      "appointment": 95,
+      "actor": 22,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 96,
+    "fields": {
+      "patient": 16,
+      "doctor": 1,
+      "starts_at": "2026-12-09T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 096",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 110,
+    "fields": {
+      "appointment": 96,
+      "actor": 23,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 97,
+    "fields": {
+      "patient": 17,
+      "doctor": 2,
+      "starts_at": "2026-12-09T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 097",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 111,
+    "fields": {
+      "appointment": 97,
+      "actor": 24,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 98,
+    "fields": {
+      "patient": 18,
+      "doctor": 3,
+      "starts_at": "2026-12-09T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 098",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 112,
+    "fields": {
+      "appointment": 98,
+      "actor": 25,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 99,
+    "fields": {
+      "patient": 19,
+      "doctor": 4,
+      "starts_at": "2026-12-09T10:00:00+03:00",
+      "reason": "Assessment demo v1 visit 099",
+      "cancellation_reason": "Fictional assessment cancellation",
+      "status": "cancelled",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 113,
+    "fields": {
+      "appointment": 99,
+      "actor": 26,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 114,
+    "fields": {
+      "appointment": 99,
+      "actor": 26,
+      "action": "cancelled",
+      "occurred_at": "2026-11-24T17:03:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointment",
+    "pk": 100,
+    "fields": {
+      "patient": 20,
+      "doctor": 5,
+      "starts_at": "2026-12-09T10:30:00+03:00",
+      "reason": "Assessment demo v1 visit 100",
+      "cancellation_reason": "",
+      "status": "confirmed",
+      "created_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 115,
+    "fields": {
+      "appointment": 100,
+      "actor": 27,
+      "action": "booked",
+      "occurred_at": "2026-11-24T16:53:03+03:00"
+    }
+  },
+  {
+    "model": "clinic.appointmentevent",
+    "pk": 116,
+    "fields": {
+      "appointment": 100,
+      "actor": 27,
+      "action": "rescheduled",
+      "occurred_at": "2026-11-24T18:52:03+03:00"
+    }
+  }
+]
