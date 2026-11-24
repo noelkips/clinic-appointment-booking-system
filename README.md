@@ -126,9 +126,11 @@ python manage.py test config.test_production --settings=config.test_settings --k
 
 ## 7. Deployment and CI/CD
 
-[CI workflow](../.github/workflows/ci.yml) is at the **Git root**, runs on PRs targeting `main` and pushes to `main`, and uses Ubuntu, pinned Python, PostgreSQL 18.6, extension setup, migration checks, the full suite, production checks and static collection. Its token has contents-read permission only. Test fixture seeding is isolated; no standalone demo seed step runs.
+For a Truehost/cPanel subdomain deployment using Passenger, see the [cPanel deployment guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md). The project includes a `passenger_wsgi.py` entry point. Confirm PostgreSQL and `btree_gist` extension support with the selected Truehost plan before deployment; MySQL cannot replace this application's production database.
 
-[Render blueprint](render.yaml) uses the inner application root, Python 3.13.12, exact dependencies, Gunicorn, managed PostgreSQL, `/health/` and `main`. Render's `checksPass` integration is the sole planned automatic deployment mechanism: a protected PR merge produces a main push check, then Render deploys after CI passes. No competing deploy hook/job exists. RootDir filtering can skip redeploys for changes outside the application folder.
+[CI workflow](.github/workflows/ci.yml) runs on PRs targeting `main` and pushes to `main`, using Ubuntu, pinned Python, PostgreSQL 18.6, extension setup, migration checks, the full suite, production checks and static collection. Its token has contents-read permission only. Test fixture seeding is isolated; no standalone demo seed step runs. The optional [cPanel deployment workflow](.github/workflows/cpanel-deploy.yml) deploys the tested `main` revision over SSH after CI passes, once its required repository secrets have been configured.
+
+[Render blueprint](render.yaml) is the existing Render-specific configuration for Python 3.13.12, Gunicorn, managed PostgreSQL, `/health/` and `main`. Its `checksPass` setting governs Render deployments; it is separate from the optional cPanel workflow described above.
 
 Free-plan preparation runs migrations at build time because pre-deploy commands require paid compute.
 
@@ -168,6 +170,7 @@ THE UI design, and also the seeding of demo data including several documentation
 
 - Original four-section assessment is the source of truth; the expected PDF is absent from this checkout. Restore your original review copy before submission.
 - [Deployment guide](docs/RENDER_DEPLOYMENT_GUIDE.md) — exact setup, validation, rollback and pending external evidence.
+- [Truehost cPanel guide](docs/TRUEHOST_CPANEL_DEPLOYMENT_GUIDE.md) — subdomain, Passenger, PostgreSQL requirements, environment and updates.
 - [API reference](docs/API_REFERENCE.md) and [local development guide](docs/LOCAL_DEVELOPMENT_GUIDE.md).
 - [Final audit](docs/FINAL_ASSESSMENT_COMPLIANCE_AUDIT.md) — historical pre-CI matrix with current preparation note.
 - [Functional verification](docs/APPLICATION_FUNCTIONAL_VERIFICATION.md), [earlier audit](docs/ASSESSMENT_COMPLIANCE_AUDIT.md), [implementation history](docs/IMPLEMENTATION_REPORT.md).

@@ -1,0 +1,74 @@
+name: Deploy to Truehost cPanel
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cpanel-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ vars.CPANEL_DEPLOY_ENABLED == 'true' && github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the exact revision that passed CI
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Configure cPanel SSH access
+        env:
+          CPANEL_SSH_PRIVATE_KEY: ${{ secrets.CPANEL_SSH_PRIVATE_KEY }}
+          CPANEL_KNOWN_HOSTS: ${{ secrets.CPANEL_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$CPANEL_SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$CPANEL_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Copy source to cPanel application root
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_APP_ROOT: ${{ secrets.CPANEL_APP_ROOT }}
+        run: |
+          test -n "$CPANEL_HOST"
+          test -n "$CPANEL_PORT"
+          test -n "$CPANEL_USER"
+          test -n "$CPANEL_APP_ROOT"
+          rsync -az \
+            --exclude='.git/' \
+            --exclude='.env' \
+            --exclude='.venv/' \
+            --exclude='staticfiles/' \
+            -e "ssh -i $HOME/.ssh/id_ed25519 -p $CPANEL_PORT -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            ./ "$CPANEL_USER@$CPANEL_HOST:$CPANEL_APP_ROOT/"
+
+      - name: Install, migrate, collect static files, and restart Passenger
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_APP_ROOT: ${{ secrets.CPANEL_APP_ROOT }}
+          CPANEL_VENV: ${{ secrets.CPANEL_VENV }}
+        run: |
+          test -n "$CPANEL_APP_ROOT"
+          test -n "$CPANEL_VENV"
+          ssh -i "$HOME/.ssh/id_ed25519" \
+            -p "$CPANEL_PORT" \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            "$CPANEL_USER@$CPANEL_HOST" \
+            "CPANEL_APP_ROOT='$CPANEL_APP_ROOT' CPANEL_VENV='$CPANEL_VENV' bash -s" \
+            < scripts/cpanel-deploy-remote.sh
