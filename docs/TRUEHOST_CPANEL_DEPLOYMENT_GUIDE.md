@@ -115,19 +115,23 @@ source directory.
 
 ### Optional fictional assessment seed
 
-For a fresh database that should contain the fictional assessment dataset, use the
-local-only `scripts/seed_truehost_demo.sh` file. It is ignored by Git because it
-contains the three README demonstration passwords. Upload it privately to the app
-root (outside `public_html`) using cPanel File Manager, then run
-`bash scripts/seed_truehost_demo.sh` from the activated virtualenv and app root.
-The script prints a read-only database inspection first and only proceeds after
-you type the exact database name shown. It uses the existing ownership-checked,
-transactional seeder, adds 27 fictional accounts and 100 sample appointments, and
-then runs its read-only verifier. Other seeded accounts have unusable passwords;
-the three primary accounts use the passwords listed in README. The command refuses
-unmarked username collisions or mismatched existing credentials and never deletes
-records. Remove the uploaded script immediately after it completes; do not commit
-or leave it on the server. Use only for a fictional demo database, never for real
+For a fresh database that should contain the fictional assessment dataset, upload
+`fulldump.json` to the app root (outside `public_html`) and run
+`python manage.py loaddata fulldump.json` after migrations. It contains 27 users,
+five doctors, twenty patients, 50 weekly schedule periods, 100 sample appointments
+and their events. The three primary users' password hashes match the README demo
+passwords; other fixture users have unusable passwords. The fixture uses fixed
+primary keys, so load it only into the fresh empty database and do not combine it
+with the Truehost seed script below. Its sample appointment dates are fixed when
+this file is generated and will age over time.
+
+Alternatively, use the local-only `scripts/seed_truehost_demo.sh` for dynamically
+dated records. It is ignored by Git because it contains the three README demo
+passwords. Upload it privately and run `bash scripts/seed_truehost_demo.sh` from
+the activated virtualenv and app root. It displays a read-only database inspection
+and requires the exact database name before seeding. It uses the existing
+ownership-checked transactional seeder and read-only verifier. Remove the uploaded
+script after use. Both options are for a fictional demo database only, never real
 patient records.
 
 The current hosted CI database job runs PostgreSQL. Before pointing the live app at
