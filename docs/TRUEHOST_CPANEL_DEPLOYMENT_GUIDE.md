@@ -13,10 +13,8 @@ Ask Truehost to confirm all of the following for the specific account/plan:
 - A Python version compatible with the pinned packages in `requirements.txt` is
   available. The project was prepared for Python 3.13.12; don't select a different
   version without checking package compatibility.
-- MySQL 8.0.16+ or MariaDB 10.5+ is available to this account and `mysqlclient`
-  can be installed in the selected cPanel Python environment.
-- If pip builds `mysqlclient` from source, the server provides a compiler,
-  `pkg-config`, and MySQL/MariaDB client development headers/libraries.
+- MySQL 8.0.16+ or MariaDB 10.5+ is available to this account. The project uses
+  PyMySQL, a pure-Python driver, so no MySQL client compiler or headers are needed.
 - The database uses the InnoDB storage engine and supports enforced `CHECK`
   constraints and stored generated columns. The appointment overlap protections
   depend on these features.
@@ -98,17 +96,13 @@ App**, then change directory to the application root. Run:
 ```bash
 python -m pip install -r requirements.txt
 python -m pip check
+python -c "import pymysql, config, MySQLdb; print('MySQL driver ready')"
 python manage.py check --deploy --fail-level WARNING
 python manage.py migrate --noinput
 python manage.py migrate --check
 python manage.py collectstatic --noinput --ignore=src
 python manage.py createsuperuser
 ```
-
-If `pip install` reports a `mysqlclient` build error, send the full error to Truehost
-and ask them to enable the MySQL client development libraries/compiler for the Python
-app, or provide a compatible wheel. Do not remove the driver dependency; Django needs
-it to connect to MySQL.
 
 Migration `0004` retains PostgreSQL/SQLite guards; `0005` adds a stored generated
 active-slot column, an enforced check that confirmed starts are on the 30-minute

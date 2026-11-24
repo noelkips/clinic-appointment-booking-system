@@ -1,10 +1,10 @@
-# Pinned runtime dependencies; mysqlclient enables the Truehost/MySQL backend.
+# Pinned runtime dependencies; PyMySQL enables the Truehost/MySQL backend.
 asgiref==3.12.1
 dj-database-url==2.3.0
 Django==5.2.18
 djangorestframework==3.18.3
 gunicorn==23.0.0
-mysqlclient==2.3.2
+PyMySQL==1.2.4
 packaging==26.3
 psycopg[binary]==3.3.6
 python-dotenv==1.2.4
